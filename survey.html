@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Copilot Pre-Session Survey — Home-Start UK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --coral: #D85A30;
+    --coral-hover: #C24A22;
+    --coral-soft: #FBEEE7;
+    --ink: #1A1814;
+    --ink-2: #3D3933;
+    --muted: #76706A;
+    --line: #E8E3DC;
+    --line-2: #F1ECE4;
+    --bg: #FAF7F2;
+    --card: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header bar */
+  .topbar {
+    border-bottom: 1px solid var(--line);
+    background: var(--card);
+  }
+  .topbar-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 22px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  .brand-mark {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--coral);
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: -0.02em;
+  }
+  .brand-x {
+    color: var(--muted);
+    font-weight: 400;
+    margin: 0 2px;
+  }
+  .badge {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg);
+  }
+
+  /* Container */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+    width: 100%;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    margin-bottom: 36px;
+  }
+  .tab {
+    flex: 1;
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: -0.005em;
+  }
+  .tab:hover {
+    color: var(--ink-2);
+  }
+  .tab.active {
+    background: var(--ink);
+    color: white;
+  }
+  .tab-num {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.6;
+    font-variant-numeric: tabular-nums;
+  }
+  .tab.active .tab-num {
+    opacity: 0.7;
+  }
+
+  /* Hero */
+  .hero {
+    margin-bottom: 32px;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 16px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 18px;
+    height: 1px;
+    background: var(--coral);
+  }
+  h1.title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+  .subtitle {
+    font-size: 17px;
+    color: var(--ink-2);
+    margin: 0 0 28px;
+    line-height: 1.45;
+    text-wrap: pretty;
+    max-width: 60ch;
+  }
+  .framing {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--coral);
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-size: 15px;
+    color: var(--ink-2);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  /* Form */
+  form { margin-top: 36px; }
+  .question {
+    margin-bottom: 32px;
+  }
+  .q-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .q-num {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--coral);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+  }
+  .q-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+  }
+  .q-hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 4px 0 12px 28px;
+    line-height: 1.45;
+  }
+  .input-wrap {
+    margin-left: 28px;
+    position: relative;
+  }
+  textarea, input.text {
+    width: 100%;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    resize: vertical;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  textarea {
+    min-height: 110px;
+  }
+  textarea::placeholder, input.text::placeholder {
+    color: #B5AEA5;
+  }
+  textarea:hover, input.text:hover {
+    border-color: #D6CFC5;
+  }
+  textarea:focus, input.text:focus {
+    outline: none;
+    border-color: var(--coral);
+    box-shadow: 0 0 0 3px rgba(216, 90, 48, 0.12);
+  }
+  .char-count {
+    position: absolute;
+    right: 10px;
+    bottom: 8px;
+    font-size: 11px;
+    color: #B5AEA5;
+    font-variant-numeric: tabular-nums;
+    background: var(--card);
+    padding: 2px 6px;
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  /* Priority field rows */
+  .priority-row {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .priority-tag {
+    flex-shrink: 0;
+    width: 88px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    padding: 12px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+  }
+  .priority-row:nth-child(1) .priority-tag {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: white;
+  }
+  .priority-rank {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .priority-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .priority-row:nth-child(1) .priority-label {
+    color: rgba(255,255,255,0.85);
+  }
+  .priority-row .input-wrap {
+    margin-left: 0;
+    flex: 1;
+  }
+  .priority-row textarea {
+    min-height: 0;
+    height: 100%;
+    min-height: 64px;
+  }
+
+  /* Submit area */
+  .submit-area {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .confidential {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .confidential svg {
+    flex-shrink: 0;
+    color: var(--coral);
+  }
+  .btn {
+    appearance: none;
+    border: none;
+    background: var(--ink);
+    color: white;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 13px 26px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.005em;
+  }
+  .btn:hover {
+    background: var(--coral);
+    transform: translateY(-1px);
+  }
+  .btn:active {
+    transform: translateY(0);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn:disabled:hover {
+    background: var(--ink);
+    transform: none;
+  }
+  .btn svg {
+    transition: transform 0.15s ease;
+  }
+  .btn:hover svg {
+    transform: translateX(2px);
+  }
+
+  /* Progress */
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--coral);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .progress-count {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-2);
+  }
+
+  /* Success state */
+  .success {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .success-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--coral-soft);
+    color: var(--coral);
+    display: inline-grid;
+    place-items: center;
+    margin-bottom: 20px;
+  }
+  .success h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 28px;
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+  .success p {
+    color: var(--muted);
+    margin: 0;
+    max-width: 36ch;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--line);
+    background: var(--card);
+    padding: 18px 32px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .panel {
+    animation: fadeUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .container { padding: 28px 20px 60px; }
+    .topbar-inner { padding: 18px 20px; }
+    h1.title { font-size: 30px; }
+    .subtitle { font-size: 15px; }
+    .priority-row { flex-direction: column; gap: 8px; }
+    .priority-tag { width: 100%; flex-direction: row; align-items: center; gap: 10px; padding: 8px 14px; }
+    .priority-rank { font-size: 15px; }
+    .submit-area { flex-direction: column-reverse; align-items: stretch; }
+    .btn { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-mark">R</div>
+          <span>Rumo Intelligence</span>
+          <span class="brand-x">×</span>
+          <span>Home-Start UK</span>
+        </div>
+        <div class="badge">Pre-session survey</div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="champion" role="tab" aria-selected="true">
+          <span class="tab-num">01</span>
+          Champion session
+        </button>
+        <button class="tab" data-tab="open" role="tab" aria-selected="false">
+          <span class="tab-num">02</span>
+          Open session
+        </button>
+      </div>
+
+      <div class="progress">
+        <span>Progress</span>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <span class="progress-count" id="progress-count">0 of 3</span>
+      </div>
+
+      <!-- Champion panel -->
+      <section class="panel" id="panel-champion">
+        <div class="hero">
+          <div class="eyebrow">For champions</div>
+          <h1 class="title">Help us shape your Copilot training</h1>
+          <p class="subtitle">Your answers will help us tailor sessions to real opportunities and challenges in your role. Takes under 5 minutes.</p>
+          <div class="framing">
+            We're running this survey ahead of your Microsoft Copilot sessions to make sure the training is practical, relevant, and focused on what matters most to you and your team.
+          </div>
+        </div>
+
+        <form id="form-champion" autocomplete="off">
+          <input type="hidden" name="dept" id="dept-champion" />
+          <div class="question">
+            <div class="q-head">
+              <span class="q-num">01</span>
+              <label class="q-label" for="c-q1">Where do you see the biggest opportunity to use Copilot in your role?</label>
+            </div>
+            <p class="q-hint">Hint: tasks that take up time, require repetitive effort, or could benefit from AI assistance.</p>
+            <div class="input-wrap">
+              <textarea id="c-q1" name="q1" maxlength="600" placeholder="e.g. Drafting funder reports, summarising long policy documents, preparing meeting notes…"></textarea>
+              <span class="char-count" data-for="c-q1">0 / 600</span>
+            </div>
+          </div>
+
+          <div class="question">
+            <div class="q-head">
+              <span class="q-num">02</span>
+              <label class="q-label" for="c-q2">What concerns or challenges might limit your use of Copilot?</label>
+            </div>
+            <p class="q-hint">Hint: data confidentiality, adoption barriers, technical concerns.</p>
+            <div class="input-wrap">
+              <textarea id="c-q2" name="q2" maxlength="600" placeholder="e.g. Worried about sharing sensitive family data, unsure how to get started, colleagues' confidence levels…"></textarea>
+              <span class="char-count" data-for="c-q2">0 / 600</span>
+            </div>
+          </div>
+
+          <div class="question">
+            <div class="q-head">
+              <span class="q-num">03</span>
+              <label class="q-label" for="c-q3">What is one specific task you would most like Copilot to help you with?</label>
+            </div>
+            <p class="q-hint">Hint: be as specific as possible — a real task you handled this week works well.</p>
+            <div class="input-wrap">
+              <textarea id="c-q3" name="q3" maxlength="600" placeholder="e.g. Turning a 30-minute volunteer interview transcript into a concise case study for our newsletter."></textarea>
+              <span class="char-count" data-for="c-q3">0 / 600</span>
+            </div>
+          </div>
+
+          <div class="submit-area">
+            <div class="confidential">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Your response is confidential
+            </div>
+            <button type="submit" class="btn">
+              Submit response
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Open panel -->
+      <section class="panel" id="panel-open" style="display:none">
+        <div class="hero">
+          <div class="eyebrow">For everyone</div>
+          <h1 class="title">What would you delegate to an AI assistant?</h1>
+          <p class="subtitle">Imagine you had a smart assistant on your laptop that could handle work for you. What would you ask it to do?</p>
+          <div class="framing">
+            This short question helps us understand what's most useful to cover in your session. There are no right or wrong answers — just tell us what would genuinely save you time.
+          </div>
+        </div>
+
+        <form id="form-open" autocomplete="off">
+          <input type="hidden" name="dept" id="dept-open" />
+          <div class="question">
+            <div class="q-head">
+              <span class="q-num">01</span>
+              <label class="q-label">If you had an assistant on your laptop, what would you ask it to help with?</label>
+            </div>
+            <p class="q-hint">List up to three tasks, ordered from most to least important.</p>
+
+            <div style="margin-top: 8px;">
+              <div class="priority-row">
+                <div class="priority-tag">
+                  <div class="priority-rank">1st</div>
+                  <div class="priority-label">Top priority</div>
+                </div>
+                <div class="input-wrap">
+                  <textarea id="o-q1" name="task1" maxlength="300" placeholder="The one thing you'd want it to take off your plate first…"></textarea>
+                  <span class="char-count" data-for="o-q1">0 / 300</span>
+                </div>
+              </div>
+              <div class="priority-row">
+                <div class="priority-tag">
+                  <div class="priority-rank">2nd</div>
+                  <div class="priority-label">Next up</div>
+                </div>
+                <div class="input-wrap">
+                  <textarea id="o-q2" name="task2" maxlength="300" placeholder="A second task that would save you real time…"></textarea>
+                  <span class="char-count" data-for="o-q2">0 / 300</span>
+                </div>
+              </div>
+              <div class="priority-row">
+                <div class="priority-tag">
+                  <div class="priority-rank">3rd</div>
+                  <div class="priority-label">Nice to have</div>
+                </div>
+                <div class="input-wrap">
+                  <textarea id="o-q3" name="task3" maxlength="300" placeholder="Optional — anything else you'd happily hand over."></textarea>
+                  <span class="char-count" data-for="o-q3">0 / 300</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="submit-area">
+            <div class="confidential">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Your response is confidential
+            </div>
+            <button type="submit" class="btn">
+              Submit response
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Success -->
+      <section class="panel" id="panel-success" style="display:none">
+        <div class="success">
+          <div class="success-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <h2>Thank you</h2>
+          <p>Your response has been recorded and will help shape your upcoming Copilot session.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      Home-Start UK · Pre-session survey · Powered by Rumo Intelligence
+    </footer>
+  </div>
+
+<script>
+  const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwxXnJl5cFcWRi-uh1ogcwcfp6qUBAU-r39NK6hG6ZLFPeMAgRnzbk2FtYFi0MmzePpyw/exec';
+
+  // Read ?dept= from URL and populate hidden fields
+  const dept = new URLSearchParams(window.location.search).get('dept') || '';
+  document.getElementById('dept-champion').value = dept;
+  document.getElementById('dept-open').value = dept;
+
+  // Tab switching
+  const tabs = document.querySelectorAll('.tab');
+  const panelChampion = document.getElementById('panel-champion');
+  const panelOpen = document.getElementById('panel-open');
+  const panelSuccess = document.getElementById('panel-success');
+  const progressFill = document.getElementById('progress-fill');
+  const progressCount = document.getElementById('progress-count');
+
+  let activeTab = 'champion';
+
+  function setTab(tab) {
+    activeTab = tab;
+    tabs.forEach(t => {
+      const isActive = t.dataset.tab === tab;
+      t.classList.toggle('active', isActive);
+      t.setAttribute('aria-selected', isActive);
+    });
+    panelSuccess.style.display = 'none';
+    panelChampion.style.display = tab === 'champion' ? '' : 'none';
+    panelOpen.style.display = tab === 'open' ? '' : 'none';
+    if (tab === 'champion') panelChampion.classList.remove('panel'), void panelChampion.offsetWidth, panelChampion.classList.add('panel');
+    if (tab === 'open') panelOpen.classList.remove('panel'), void panelOpen.offsetWidth, panelOpen.classList.add('panel');
+    updateProgress();
+  }
+  tabs.forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
+
+  // Char counts
+  document.querySelectorAll('textarea[maxlength], input.text[maxlength]').forEach(el => {
+    const counter = document.querySelector(`.char-count[data-for="${el.id}"]`);
+    const max = el.getAttribute('maxlength');
+    const update = () => {
+      if (counter) counter.textContent = `${el.value.length} / ${max}`;
+      updateProgress();
+    };
+    el.addEventListener('input', update);
+  });
+
+  // Progress
+  function updateProgress() {
+    const form = activeTab === 'champion' ? document.getElementById('form-champion') : document.getElementById('form-open');
+    const fields = form.querySelectorAll('textarea, input.text');
+    let filled = 0;
+    fields.forEach(f => { if (f.value.trim().length > 0) filled++; });
+    progressCount.textContent = `${filled} of 3`;
+    progressFill.style.width = `${(filled / 3) * 100}%`;
+  }
+
+  function setSubmitting(form, isSubmitting) {
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = isSubmitting;
+    btn.innerHTML = isSubmitting
+      ? 'Sending…<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
+      : 'Submit response<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+  }
+
+  function showSuccess() {
+    panelChampion.style.display = 'none';
+    panelOpen.style.display = 'none';
+    panelSuccess.style.display = '';
+    panelSuccess.classList.remove('panel');
+    void panelSuccess.offsetWidth;
+    panelSuccess.classList.add('panel');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showError(form) {
+    let err = form.querySelector('.submit-error');
+    if (!err) {
+      err = document.createElement('p');
+      err.className = 'submit-error';
+      err.style.cssText = 'color:#c0392b;font-size:13px;margin:12px 0 0;text-align:right;';
+      form.querySelector('.submit-area').appendChild(err);
+    }
+    err.textContent = 'Something went wrong — please try again.';
+  }
+
+  function handleSubmit(formId, sessionType) {
+    const form = document.getElementById(formId);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errEl = form.querySelector('.submit-error');
+      if (errEl) errEl.textContent = '';
+
+      const data = { timestamp: new Date().toISOString(), department: dept, sessionType };
+      new FormData(form).forEach((val, key) => {
+        if (key !== 'dept') data[key] = val;
+      });
+
+      setSubmitting(form, true);
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        showSuccess();
+      } catch (_) {
+        setSubmitting(form, false);
+        showError(form);
+      }
+    });
+  }
+
+  handleSubmit('form-champion', 'Champion');
+  handleSubmit('form-open', 'Open');
+
+  updateProgress();
+</script>
+</body>
+</html>
