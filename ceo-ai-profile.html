@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CEO AI Profile — Rumo Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blush:#F2E8E3;
+    --blush-deep:#EADBD2;
+    --ink:#1A1A1A;
+    --ink-soft:#3a3a3a;
+    --muted:#7d7368;
+    --muted-soft:#a8a097;
+    --rule:#E6D8CF;
+    --card:#FFFFFF;
+    --card-dark:#0F0F10;
+    --card-dark-2:#1B1B1D;
+    --accent:#E8C547;
+    --accent-deep:#C9A82E;
+    --ok:#1f7a45;
+    --shadow: 0 1px 2px rgba(26,26,26,.04), 0 24px 60px -28px rgba(26,26,26,.18);
+    --shadow-soft: 0 1px 2px rgba(26,26,26,.04), 0 8px 28px -16px rgba(26,26,26,.14);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--blush);color:var(--ink);
+    font-family:'Manrope',ui-sans-serif,system-ui,sans-serif;
+    font-weight:300;font-size:16px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    font-feature-settings:"ss01","cv11";
+  }
+  body{min-height:100vh}
+  #root{min-height:100vh}
+  button{font-family:inherit;cursor:pointer}
+  input,textarea,select{font-family:inherit;color:inherit}
+  textarea{resize:vertical}
+  .nice-scroll{scrollbar-width:thin;scrollbar-color:#666 transparent}
+  .nice-scroll::-webkit-scrollbar{width:8px;height:8px}
+  .nice-scroll::-webkit-scrollbar-thumb{background:#555;border-radius:4px}
+  ::selection{background:var(--accent);color:var(--ink)}
+  @keyframes screen-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .screen-anim{animation:screen-in .42s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .spin{animation:spin 1s linear infinite}
+  @keyframes caret{0%,49%{opacity:1}50%,100%{opacity:0}}
+  .caret{animation:caret 1s steps(2) infinite}
+  .field:focus-within{box-shadow:0 0 0 1px var(--ink) inset, 0 0 0 4px rgba(232,197,71,.25);
+    border-color:var(--ink)}
+  textarea:focus, input:focus{outline:none}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+
+// ─── Icons ────────────────────────────────────────────────────────────────────
+const Lock = () => (
+  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2">
+    <rect x="2.5" y="5.5" width="7" height="5" rx="1" />
+    <path d="M4 5.5V3.8A2 2 0 0 1 6 1.8a2 2 0 0 1 2 2v1.7" />
+  </svg>
+);
+
+const CheckCircle = () => (
+  <svg width="18" height="18" viewBox="0 0 20 20" style={{flexShrink:0, marginTop:2}}>
+    <circle cx="10" cy="10" r="9" fill="none" stroke="var(--ink)" strokeWidth="1.2" />
+    <path d="M6 10.5l2.6 2.6L14 7.6" fill="none" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const Spinner = () => (
+  <svg width="22" height="22" viewBox="0 0 22 22" className="spin">
+    <circle cx="11" cy="11" r="9" fill="none" stroke="rgba(0,0,0,.1)" strokeWidth="2" />
+    <path d="M11 2 a9 9 0 0 1 9 9" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" />
+  </svg>
+);
+
+// ─── Logo ─────────────────────────────────────────────────────────────────────
+const RumoLogo = ({ size = 22 }) => (
+  <div style={{display:'inline-flex', alignItems:'center', gap: size*0.38, lineHeight:1}}>
+    <span style={{
+      fontFamily:'Manrope', fontWeight:800, fontSize:size,
+      letterSpacing:'-0.04em', color:'var(--ink)', position:'relative'
+    }}>
+      rumo
+      <span style={{
+        position:'absolute', right:-size*0.22, top:size*0.08,
+        width:size*0.14, height:size*0.14, borderRadius:'50%',
+        background:'var(--accent)'
+      }} />
+    </span>
+    <span style={{
+      fontFamily:'Manrope', fontWeight:300, fontSize:size*0.86,
+      letterSpacing:'0.02em', color:'var(--ink)', opacity:.55
+    }}>intelligence</span>
+  </div>
+);
+
+// ─── Layout ───────────────────────────────────────────────────────────────────
+const Header = () => (
+  <header style={{
+    display:'flex', alignItems:'center', justifyContent:'space-between',
+    padding:'28px 48px', position:'sticky', top:0, zIndex:5,
+    background:'linear-gradient(to bottom, var(--blush) 70%, rgba(242,232,227,0))',
+  }}>
+    <RumoLogo size={22} />
+    <div style={{
+      fontWeight:500, fontSize:13, letterSpacing:'0.12em',
+      textTransform:'uppercase', color:'var(--muted)'
+    }}>CEO AI Profile</div>
+  </header>
+);
+
+const ProgressBar = ({ step, total, sectionName, optional = false }) => {
+  const pct = Math.max(0, Math.min(1, step / total));
+  return (
+    <div style={{padding:'0 48px 6px'}}>
+      <div style={{
+        display:'flex', justifyContent:'space-between', alignItems:'baseline',
+        fontSize:12, letterSpacing:'0.08em', textTransform:'uppercase',
+        color:'var(--muted)', fontWeight:500, marginBottom:10
+      }}>
+        <span style={{display:'inline-flex', alignItems:'center', gap:10}}>
+          <span style={{fontVariantNumeric:'tabular-nums'}}>
+            {String(step).padStart(2,'0')} <span style={{opacity:.55}}>of {String(total).padStart(2,'0')}</span>
+          </span>
+          {optional && (
+            <span style={{
+              padding:'3px 8px', border:'1px solid var(--rule)',
+              borderRadius:999, fontSize:10, letterSpacing:'0.1em',
+              color:'var(--muted)', textTransform:'uppercase', fontWeight:500
+            }}>Optional</span>
+          )}
+        </span>
+        <span style={{color:'var(--ink)', fontWeight:600, letterSpacing:'0.08em'}}>{sectionName}</span>
+      </div>
+      <div style={{height:2, background:'var(--rule)', borderRadius:2, overflow:'hidden'}}>
+        <div style={{
+          width:`${pct*100}%`, height:'100%', background:'var(--ink)',
+          transition:'width .6s cubic-bezier(.2,.7,.2,1)'
+        }} />
+      </div>
+    </div>
+  );
+};
+
+const Footer = () => (
+  <footer style={{
+    padding:'28px 48px 36px', display:'flex', justifyContent:'center',
+    color:'var(--muted)', fontSize:12, letterSpacing:'0.06em', fontWeight:400
+  }}>
+    <span style={{display:'inline-flex', alignItems:'center', gap:8}}>
+      <Lock /> Your answers are confidential
+    </span>
+  </footer>
+);
+
+const Card = ({ children, dark = false, maxWidth = 760 }) => (
+  <div style={{
+    margin:'0 auto', maxWidth, width:'100%',
+    background: dark ? 'var(--card-dark)' : 'var(--card)',
+    color: dark ? '#F4EFEA' : 'var(--ink)',
+    border: dark ? '1px solid #2a2a2c' : '1px solid var(--rule)',
+    borderRadius:16,
+    padding:'56px 56px 36px',
+    boxShadow: dark
+      ? '0 1px 2px rgba(0,0,0,.4), 0 30px 70px -30px rgba(0,0,0,.5)'
+      : 'var(--shadow)'
+  }}>{children}</div>
+);
+
+const SectionHead = ({ kicker, title, subtitle }) => (
+  <div style={{marginBottom:36}}>
+    {kicker && <div style={{
+      fontSize:11, letterSpacing:'0.18em', textTransform:'uppercase',
+      color:'var(--muted)', fontWeight:600, marginBottom:14
+    }}>{kicker}</div>}
+    <h1 style={{
+      margin:0, fontWeight:800, fontSize:42, lineHeight:1.08,
+      letterSpacing:'-0.025em', color:'var(--ink)'
+    }}>{title}</h1>
+    {subtitle && <p style={{
+      margin:'14px 0 0', fontWeight:300, fontSize:17.5, lineHeight:1.5,
+      color:'var(--muted)', maxWidth:560
+    }}>{subtitle}</p>}
+  </div>
+);
+
+// ─── Form controls ────────────────────────────────────────────────────────────
+const QLabel = ({ n, label, hint }) => (
+  <div style={{marginBottom:14}}>
+    <div style={{display:'flex', alignItems:'baseline', gap:14}}>
+      <span style={{
+        fontVariantNumeric:'tabular-nums', fontWeight:500,
+        color:'var(--muted)', fontSize:13, letterSpacing:'0.04em', minWidth:24
+      }}>Q{n}</span>
+      <span style={{
+        fontWeight:600, fontSize:18, lineHeight:1.35, color:'var(--ink)',
+        letterSpacing:'-0.005em'
+      }}>{label}</span>
+    </div>
+    {hint && <div style={{
+      marginLeft:38, marginTop:6, fontSize:13.5, fontWeight:300,
+      color:'var(--muted)', lineHeight:1.5
+    }}>{hint}</div>}
+  </div>
+);
+
+const FieldShell = ({ children }) => (
+  <div className="field" style={{
+    border:'1px solid var(--rule)', borderRadius:10,
+    background:'#FCFAF8', transition:'box-shadow .2s, border-color .2s',
+    marginLeft:38
+  }}>{children}</div>
+);
+
+const TextField = ({ value, onChange, placeholder, rows = 3 }) => (
+  <FieldShell>
+    <textarea
+      value={value} onChange={e => onChange(e.target.value)}
+      placeholder={placeholder} rows={rows}
+      style={{
+        width:'100%', border:0, background:'transparent', padding:'14px 16px',
+        fontSize:15, fontWeight:400, lineHeight:1.55, color:'var(--ink)',
+        resize:'vertical', minHeight: rows * 22 + 28
+      }}
+    />
+  </FieldShell>
+);
+
+const ShortField = ({ value, onChange, placeholder }) => (
+  <FieldShell>
+    <input
+      type="text" value={value} onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      style={{
+        width:'100%', border:0, background:'transparent', padding:'14px 16px',
+        fontSize:15, fontWeight:400, color:'var(--ink)'
+      }}
+    />
+  </FieldShell>
+);
+
+const Choice = ({ value, onChange, options, columns = 2 }) => (
+  <div style={{
+    marginLeft:38, display:'grid', gap:10,
+    gridTemplateColumns: `repeat(${columns}, 1fr)`
+  }}>
+    {options.map(opt => {
+      const v = opt.value;
+      const active = value === v;
+      return (
+        <button key={v} type="button" onClick={() => onChange(v)}
+          style={{
+            border:`1px solid ${active ? 'var(--ink)' : 'var(--rule)'}`,
+            background: active ? 'var(--ink)' : '#FCFAF8',
+            color: active ? '#FFF' : 'var(--ink)',
+            borderRadius:10, padding:'14px 16px', textAlign:'left',
+            transition:'all .18s', fontFamily:'inherit',
+            display:'flex', flexDirection:'column', gap:4
+          }}>
+          <span style={{fontWeight:600, fontSize:14.5}}>{opt.label}</span>
+          {opt.sub && <span style={{
+            fontWeight:300, fontSize:12.5,
+            color: active ? 'rgba(255,255,255,.7)' : 'var(--muted)'
+          }}>{opt.sub}</span>}
+        </button>
+      );
+    })}
+  </div>
+);
+
+const NavButtons = ({ onBack, onNext, nextLabel = 'Continue', onSkip, skipLabel, disabled }) => (
+  <div style={{
+    display:'flex', alignItems:'center', justifyContent:'space-between',
+    marginTop:40, paddingTop:28, borderTop:'1px solid var(--rule)'
+  }}>
+    <div style={{display:'flex', gap:18, alignItems:'center'}}>
+      {onBack ? (
+        <button type="button" onClick={onBack}
+          style={{
+            background:'transparent', border:'none', padding:'10px 0',
+            fontWeight:500, fontSize:14, color:'var(--ink)',
+            letterSpacing:'0.02em', display:'inline-flex', alignItems:'center', gap:8
+          }}>
+          <span style={{fontSize:16, lineHeight:1}}>←</span> Back
+        </button>
+      ) : <span/>}
+      {onSkip && (
+        <button type="button" onClick={onSkip}
+          style={{
+            background:'transparent', border:'none', padding:'10px 0',
+            fontWeight:400, fontSize:13.5, color:'var(--muted-soft)',
+            textDecoration:'underline', textUnderlineOffset:3,
+          }}>{skipLabel}</button>
+      )}
+    </div>
+    <button type="button" onClick={onNext} disabled={disabled}
+      style={{
+        background: disabled ? '#dcdcdc' : 'var(--ink)',
+        color:'#fff', border:'none', padding:'14px 26px', borderRadius:8,
+        fontWeight:600, fontSize:14, letterSpacing:'0.02em',
+        display:'inline-flex', alignItems:'center', gap:10,
+        boxShadow: disabled ? 'none' : '0 1px 2px rgba(0,0,0,.1)',
+        opacity: disabled ? .6 : 1
+      }}>
+      {nextLabel} <span style={{fontSize:16, lineHeight:1}}>→</span>
+    </button>
+  </div>
+);
+
+// ─── Section screens ──────────────────────────────────────────────────────────
+const SectionOne = ({ a, set }) => (
+  <>
+    <SectionHead kicker="Section 1 — Who you are"
+      title="Let's start with you."
+      subtitle="A few sentences in your own words. Don't worry about polish — write the way you actually think." />
+    <div style={{display:'flex', flexDirection:'column', gap:28}}>
+      <div>
+        <QLabel n={1} label="What is your name and what company do you lead?" />
+        <ShortField value={a.q1} onChange={v => set('q1', v)}
+          placeholder="e.g. Mariana Costa, Founder & CEO of Northwind Logistics" />
+      </div>
+      <div>
+        <QLabel n={2} label="Describe your work in one sentence."
+          hint="Not your title — what you actually do every day." />
+        <TextField value={a.q2} onChange={v => set('q2', v)} rows={2}
+          placeholder="I make sure the right people are working on the right things, and unblock them when they get stuck." />
+      </div>
+      <div>
+        <QLabel n={3} label="Describe your company in two sentences."
+          hint="Size, what you do, what stage you're at." />
+        <TextField value={a.q3} onChange={v => set('q3', v)} rows={3}
+          placeholder="We're a 60-person B2B logistics platform serving European mid-market retailers. We hit profitability last year and are now scaling the commercial team into two new countries." />
+      </div>
+      <div>
+        <QLabel n={4} label="What decision did you make this week?"
+          hint="Describe it briefly — the more concrete, the better." />
+        <TextField value={a.q4} onChange={v => set('q4', v)} rows={3}
+          placeholder="Postponed the H2 brand refresh by one quarter to free engineering capacity for the onboarding rewrite." />
+      </div>
+    </div>
+  </>
+);
+
+const SectionTwo = ({ a, set }) => (
+  <>
+    <SectionHead kicker="Section 2 — How you think"
+      title="How you make decisions."
+      subtitle="There are no right answers. Claude needs to understand your reasoning style so it can match it." />
+    <div style={{display:'flex', flexDirection:'column', gap:28}}>
+      <div>
+        <QLabel n={5} label="When you receive bad news — what do you do in the first 10 minutes?" />
+        <TextField value={a.q5} onChange={v => set('q5', v)} rows={3}
+          placeholder="I close my laptop, take a walk, and write down what I know, what I don't know, and who I need to call." />
+      </div>
+      <div>
+        <QLabel n={6} label={'Finish this sentence: "A good result for me is when…"'} />
+        <TextField value={a.q6} onChange={v => set('q6', v)} rows={2}
+          placeholder="…the team made the call without needing me in the room." />
+      </div>
+      <div>
+        <QLabel n={7} label="Describe a decision you're most proud of."
+          hint="What did you do, and why did it work?" />
+        <TextField value={a.q7} onChange={v => set('q7', v)} rows={4}
+          placeholder="Walking away from the Series B term sheet in 2023. We'd have grown faster but lost the right to choose customers. Held the line, raised quieter capital six months later on better terms." />
+      </div>
+      <div>
+        <QLabel n={8} label="Describe a mistake and what you took from it." />
+        <TextField value={a.q8} onChange={v => set('q8', v)} rows={4}
+          placeholder="Hired a VP Sales for a stage we weren't at yet. Lost a year. Now I look for proof people can build the system, not just run it." />
+      </div>
+    </div>
+  </>
+);
+
+const SectionThree = ({ a, set }) => (
+  <>
+    <SectionHead kicker="Section 3 — How you work"
+      title="Your next ninety days."
+      subtitle="Give Claude the context it needs to be useful right now — not in the abstract, but in the situation you're actually in." />
+    <div style={{display:'flex', flexDirection:'column', gap:28}}>
+      <div>
+        <QLabel n={9} label="What's happening in your company right now?"
+          hint="Your main focus for the next 3 months." />
+        <TextField value={a.q9} onChange={v => set('q9', v)} rows={3}
+          placeholder="Two priorities: launch enterprise tier in September, and rebuild the leadership team's weekly operating cadence." />
+      </div>
+      <div>
+        <QLabel n={10} label="What could go wrong in the next 3 months?"
+          hint="Your biggest risk." />
+        <TextField value={a.q10} onChange={v => set('q10', v)} rows={3}
+          placeholder="The enterprise launch slips and we burn pipeline. Or the CRO and the new VP Eng don't gel." />
+      </div>
+      <div>
+        <QLabel n={11} label="What takes up your time but shouldn't?" />
+        <TextField value={a.q11} onChange={v => set('q11', v)} rows={3}
+          placeholder="Inbox triage. Reviewing decks that should never have come to me. Calendar tetris." />
+      </div>
+      <div>
+        <QLabel n={12} label="Which part of your work gives you energy, and which takes it away?" />
+        <TextField value={a.q12} onChange={v => set('q12', v)} rows={3}
+          placeholder="Customer conversations and shaping strategy give me energy. Status-update meetings drain it." />
+      </div>
+    </div>
+  </>
+);
+
+const SectionFour = ({ a, set }) => (
+  <>
+    <SectionHead kicker="Section 4 — How you communicate"
+      title="Your voice."
+      subtitle="The way you write is how Claude will write for you. The more specific, the more it sounds like you." />
+    <div style={{display:'flex', flexDirection:'column', gap:28}}>
+      <div>
+        <QLabel n={13} label="Quote a phrase from an email you're proud of — or describe the situation." />
+        <TextField value={a.q13} onChange={v => set('q13', v)} rows={3}
+          placeholder={'"We won\'t be moving forward, but I want to be honest about why — it has more to do with our timing than with your proposal."'} />
+      </div>
+      <div>
+        <QLabel n={14} label="What irritates you about emails you receive?" />
+        <TextField value={a.q14} onChange={v => set('q14', v)} rows={3}
+          placeholder='Padding. Three paragraphs to ask one question. Saying "just" before every verb.' />
+      </div>
+      <div>
+        <QLabel n={15} label='Write one sentence to a partner, and one to your team, about the same news.'
+          hint='"We are delaying the launch by two weeks." Two short notes.' />
+        <TextField value={a.q15} onChange={v => set('q15', v)} rows={5}
+          placeholder={"To partner: Quick heads up — we're pushing the launch by two weeks to land it properly. I'll send a revised plan Friday.\n\nTo team: We're moving launch to the 28th. Quality over date. I'll explain in tomorrow's standup."} />
+      </div>
+      <div>
+        <QLabel n={16} label="How do you give feedback to your team when something goes wrong?" />
+        <TextField value={a.q16} onChange={v => set('q16', v)} rows={3}
+          placeholder="Privately, same day, with the facts before the feelings. I ask them to walk me through their thinking before I share mine." />
+      </div>
+      <div>
+        <QLabel n={17} label="Whose communication style do you respect?"
+          hint="What, specifically, do you admire?" />
+        <TextField value={a.q17} onChange={v => set('q17', v)} rows={3}
+          placeholder="Stewart Butterfield's old Slack memos. He explained why before he asked for what — and he never hid the trade-offs." />
+      </div>
+    </div>
+  </>
+);
+
+const SectionFive = ({ a, set }) => (
+  <>
+    <SectionHead kicker="Section 5 — How Claude should work"
+      title="How you want to be helped."
+      subtitle="A few preferences so Claude lands its first reply in the right shape — not the second or third." />
+    <div style={{display:'flex', flexDirection:'column', gap:32}}>
+      <div>
+        <QLabel n={18} label="When you need help with a decision — what do you want?" />
+        <Choice value={a.q18} onChange={v => set('q18', v)} columns={2}
+          options={[
+            { value:'options', label:'Show me the options', sub:"Lay out the trade-offs. I'll pick." },
+            { value:'direct',  label:'Give me a direct recommendation', sub:'Tell me what you would do, and why.' },
+            { value:'both',    label:'A recommendation, then alternatives', sub:'Lead with a call. Show the other paths.' },
+            { value:'depends', label:'Ask me first', sub:'Clarify what kind of help I need before answering.' },
+          ]} />
+      </div>
+      <div>
+        <QLabel n={19} label="How do you prefer to receive information?" />
+        <Choice value={a.q19} onChange={v => set('q19', v)} columns={3}
+          options={[
+            { value:'conclusion', label:'Conclusion first', sub:'Then context if I ask.' },
+            { value:'context',    label:'Full context first', sub:'Walk me through the reasoning.' },
+            { value:'tldr',       label:'TL;DR + detail', sub:'A line up top, depth below.' },
+          ]} />
+      </div>
+      <div>
+        <QLabel n={20} label="What should Claude never write on your behalf?"
+          hint="Topics, tone, phrasing — anything that wouldn't sound like you." />
+        <TextField value={a.q20} onChange={v => set('q20', v)} rows={4}
+          placeholder={"Don't use 'just', 'quick thought', or 'circling back'. Don't write condolence notes or anything involving someone's family — I'll do those myself."} />
+      </div>
+      <div>
+        <QLabel n={21} label="Anything else worth knowing?"
+          hint="Optional — about you, your company, your situation." />
+        <TextField value={a.q21} onChange={v => set('q21', v)} rows={4}
+          placeholder="I'm Brazilian, based in Lisbon, working across PT/UK/US timezones. English-first but Portuguese with my exec team." />
+      </div>
+    </div>
+  </>
+);
+
+const SectionSix = ({ a, set }) => (
+  <>
+    <div style={{
+      display:'inline-flex', alignItems:'center', gap:8,
+      padding:'6px 10px', borderRadius:999,
+      background:'rgba(232,197,71,0.18)', border:'1px solid rgba(232,197,71,0.5)',
+      fontSize:11, letterSpacing:'0.14em', textTransform:'uppercase',
+      fontWeight:600, color:'var(--ink)', marginBottom:18
+    }}>
+      Optional — skip if you prefer
+    </div>
+    <SectionHead
+      title="Show us how you write."
+      subtitle="Paste 3–5 of your sent emails below. Claude will analyse your real writing style and make your profile significantly more accurate." />
+    <div className="field" style={{
+      border:'1px solid var(--rule)', borderRadius:10,
+      background:'#FCFAF8', transition:'box-shadow .2s, border-color .2s',
+    }}>
+      <textarea
+        value={a.emails}
+        onChange={e => set('emails', e.target.value)}
+        placeholder="Paste your emails here — remove any sensitive names or details if needed."
+        rows={14}
+        style={{
+          width:'100%', border:0, background:'transparent', padding:'18px 20px',
+          fontSize:14.5, fontWeight:400, lineHeight:1.6, color:'var(--ink)',
+          resize:'vertical', minHeight:320, fontFamily:'inherit'
+        }}
+      />
+    </div>
+    <div style={{
+      marginTop:14, fontSize:12.5, color:'var(--muted)',
+      fontWeight:300, lineHeight:1.5, display:'flex', alignItems:'center', gap:8
+    }}>
+      <Lock /> Your emails are used only to build your profile. They are not stored.
+    </div>
+  </>
+);
+
+// ─── Generate screen ──────────────────────────────────────────────────────────
+const GenerateScreen = ({ phase, progress }) => {
+  const lines = [
+    'Reading your answers…',
+    'Mapping decision patterns…',
+    'Calibrating voice and tone…',
+    'Drafting your system prompt…',
+    'Polishing the final lines…',
+  ];
+  const step = Math.min(lines.length - 1, Math.floor((progress / 100) * lines.length));
+  return (
+    <div style={{padding:'40px 0 20px'}}>
+      <SectionHead kicker="Almost done"
+        title={phase === 'idle' ? 'Ready when you are.' : 'Building your profile…'}
+        subtitle={phase === 'idle' ? "We'll synthesise everything you wrote into a single system prompt — written in the voice of someone briefing Claude on you." : ' '} />
+      {phase === 'idle' ? (
+        <ul style={{
+          margin:'0 0 36px', padding:0, listStyle:'none',
+          display:'flex', flexDirection:'column', gap:14
+        }}>
+          {[
+            'Twenty-one answers compiled into a single brief',
+            'Tone analysed across short-form and long-form writing',
+            'Your preferences for response shape encoded',
+            "Phrases you've flagged as off-limits stored as constraints",
+          ].map(item => (
+            <li key={item} style={{
+              display:'flex', alignItems:'flex-start', gap:14,
+              fontSize:15, color:'var(--ink)', fontWeight:400
+            }}>
+              <CheckCircle />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div style={{padding:'48px 0', textAlign:'left'}}>
+          <div style={{display:'flex', alignItems:'center', gap:18, marginBottom:36}}>
+            <Spinner />
+            <div style={{
+              fontFamily:'JetBrains Mono, ui-monospace, monospace',
+              fontSize:14, color:'var(--ink)', letterSpacing:'-0.01em'
+            }}>
+              {lines[step]} <span className="caret">▍</span>
+            </div>
+          </div>
+          <div style={{
+            height:2, background:'var(--rule)', borderRadius:2, overflow:'hidden',
+            maxWidth:420
+          }}>
+            <div style={{
+              width:`${progress}%`, height:'100%', background:'var(--accent)',
+              transition:'width .6s cubic-bezier(.2,.7,.2,1)'
+            }} />
+          </div>
+          <ul style={{
+            margin:'28px 0 0', padding:0, listStyle:'none',
+            display:'flex', flexDirection:'column', gap:10,
+            fontFamily:'JetBrains Mono, ui-monospace, monospace',
+            fontSize:12.5, color:'var(--muted)'
+          }}>
+            {lines.slice(0, step).map((l, i) => (
+              <li key={i} style={{display:'flex', gap:10, color:'var(--ink-soft)'}}>
+                <span style={{color:'var(--ok)'}}>✓</span> {l}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Results screen ───────────────────────────────────────────────────────────
+const ResultsScreen = ({ prompt, onRestart }) => {
+  const [copied, setCopied] = useState(false);
+  const taRef = useRef(null);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(prompt);
+    } catch {
+      const t = taRef.current;
+      if (t) { t.select(); document.execCommand('copy'); }
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2200);
+  };
+
+  return (
+    <div>
+      <div style={{
+        fontSize:11, letterSpacing:'0.2em', textTransform:'uppercase',
+        color:'rgba(255,255,255,.55)', fontWeight:600, marginBottom:16,
+        display:'flex', alignItems:'center', gap:10
+      }}>
+        <span style={{
+          width:6, height:6, borderRadius:'50%', background:'var(--accent)',
+          boxShadow:'0 0 0 4px rgba(232,197,71,.18)'
+        }}/>
+        Profile ready
+      </div>
+      <h1 style={{
+        margin:0, fontWeight:800, fontSize:38, lineHeight:1.1,
+        letterSpacing:'-0.025em', color:'#F4EFEA'
+      }}>Your Claude System Prompt is ready.</h1>
+      <p style={{
+        margin:'14px 0 0', fontWeight:300, fontSize:16.5, lineHeight:1.55,
+        color:'rgba(244,239,234,.65)', maxWidth:560
+      }}>Copy this and paste it into Claude as Project Instructions.</p>
+
+      <div style={{
+        marginTop:32, background:'var(--card-dark-2)', borderRadius:12,
+        border:'1px solid #2a2a2c', overflow:'hidden', position:'relative'
+      }}>
+        <div style={{
+          display:'flex', alignItems:'center', justifyContent:'space-between',
+          padding:'12px 16px', borderBottom:'1px solid #2a2a2c',
+          fontFamily:'JetBrains Mono, ui-monospace, monospace', fontSize:12,
+          color:'rgba(244,239,234,.5)', letterSpacing:'0.04em'
+        }}>
+          <span>system-prompt.md</span>
+          <span style={{fontSize:11}}>{prompt.split('\n').length} lines · {prompt.length} chars</span>
+        </div>
+        <pre ref={taRef} className="nice-scroll" style={{
+          margin:0, padding:'22px 24px',
+          maxHeight:360, overflow:'auto',
+          fontFamily:'JetBrains Mono, ui-monospace, monospace',
+          fontSize:12.5, lineHeight:1.65, color:'#E8E2DC',
+          whiteSpace:'pre-wrap', wordBreak:'break-word',
+          background:'var(--card-dark-2)'
+        }}>{prompt}</pre>
+      </div>
+
+      <div style={{marginTop:24, display:'flex', alignItems:'center', gap:14}}>
+        <button type="button" onClick={copy}
+          style={{
+            background:'var(--accent)', color:'var(--ink)',
+            border:'none', padding:'14px 22px', borderRadius:8,
+            fontWeight:700, fontSize:14, letterSpacing:'0.02em',
+            display:'inline-flex', alignItems:'center', gap:10,
+            boxShadow:'0 1px 2px rgba(0,0,0,.3), 0 8px 24px -10px rgba(232,197,71,.5)'
+          }}>
+          {copied ? '✓ Copied to clipboard' : 'Copy to clipboard'}
+        </button>
+        <button type="button"
+          onClick={() => {
+            const blob = new Blob([prompt], {type:'text/markdown'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'ceo-ai-profile.md'; a.click();
+            URL.revokeObjectURL(url);
+          }}
+          style={{
+            background:'transparent', color:'#F4EFEA',
+            border:'1px solid rgba(244,239,234,.25)',
+            padding:'13px 18px', borderRadius:8,
+            fontWeight:500, fontSize:14
+          }}>
+          Download .md
+        </button>
+      </div>
+
+      <div style={{
+        marginTop:48, paddingTop:28, borderTop:'1px solid #2a2a2c',
+        display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:0
+      }}>
+        {[
+          ['01', 'Open Claude.ai', 'Sign in to your account.'],
+          ['02', 'Create a Project', 'New Project → name it however you like.'],
+          ['03', 'Paste as Instructions', 'Project settings → System prompt.'],
+        ].map(([n, h, b], i) => (
+          <div key={n} style={{
+            paddingLeft: i===0 ? 0 : 24,
+            paddingRight: i===2 ? 0 : 24,
+            borderLeft: i===0 ? 'none' : '1px solid #2a2a2c'
+          }}>
+            <div style={{
+              fontFamily:'JetBrains Mono, ui-monospace, monospace',
+              fontSize:11, color:'var(--accent)', marginBottom:10, letterSpacing:'0.06em'
+            }}>{n}</div>
+            <div style={{fontWeight:600, fontSize:15, color:'#F4EFEA', marginBottom:6}}>{h}</div>
+            <div style={{fontWeight:300, fontSize:13, color:'rgba(244,239,234,.55)', lineHeight:1.5}}>{b}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{
+        marginTop:40, display:'flex', alignItems:'center', justifyContent:'space-between',
+        fontSize:12.5, color:'rgba(244,239,234,.4)', fontWeight:300
+      }}>
+        <span>You can update this anytime by running the form again.</span>
+        <button type="button" onClick={onRestart}
+          style={{
+            background:'transparent', border:'none',
+            color:'rgba(244,239,234,.6)', textDecoration:'underline',
+            textUnderlineOffset:3, fontSize:12.5
+          }}>
+          Start over
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ─── Intro screen ─────────────────────────────────────────────────────────────
+const IntroScreen = () => (
+  <>
+    <div style={{
+      fontSize:11, letterSpacing:'0.2em', textTransform:'uppercase',
+      color:'var(--muted)', fontWeight:600, marginBottom:22
+    }}>An onboarding for one</div>
+    <h1 style={{
+      margin:0, fontWeight:800, fontSize:54, lineHeight:1.05,
+      letterSpacing:'-0.03em', color:'var(--ink)', maxWidth:620
+    }}>Build a Claude that<br/>
+      <span style={{position:'relative', whiteSpace:'nowrap'}}>
+        thinks like you.
+        <span style={{
+          position:'absolute', left:0, right:0, bottom:8, height:14,
+          background:'var(--accent)', opacity:.6, zIndex:-1,
+          borderRadius:2, transform:'translateY(2px)'
+        }}/>
+      </span>
+    </h1>
+    <p style={{
+      margin:'24px 0 0', fontWeight:300, fontSize:18, lineHeight:1.55,
+      color:'var(--ink-soft)', maxWidth:560
+    }}>
+      Twenty-one questions. Roughly fifteen minutes. You'll come out the other side
+      with a personalised system prompt — paste it into Claude and it will start
+      writing, reasoning and triaging like a partner who's already been at your side
+      for two years.
+    </p>
+    <div style={{
+      marginTop:42, display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:0,
+      borderTop:'1px solid var(--rule)', borderBottom:'1px solid var(--rule)'
+    }}>
+      {[
+        ['Six sections', 'Each one a different lens on how you operate.'],
+        ['Yours alone',  'Answers stay in your browser. Nothing is sent anywhere.'],
+        ['Editable',     'Re-run any time your priorities shift. Profiles are not for life.'],
+      ].map(([h, b], i) => (
+        <div key={h} style={{
+          padding:'22px 24px 22px 0',
+          borderLeft: i===0 ? '0' : '1px solid var(--rule)',
+          paddingLeft: i===0 ? 0 : 24,
+        }}>
+          <div style={{fontWeight:700, fontSize:14, color:'var(--ink)', marginBottom:6}}>{h}</div>
+          <div style={{fontWeight:300, fontSize:13.5, color:'var(--muted)', lineHeight:1.5}}>{b}</div>
+        </div>
+      ))}
+    </div>
+  </>
+);
+
+// ─── Prompt builder ───────────────────────────────────────────────────────────
+const DECISION_STYLE = {
+  options:  "When I ask for help with a decision, lay out the options with trade-offs and let me choose. Don't push a recommendation unless I ask for one.",
+  direct:   "When I ask for help with a decision, give me a direct recommendation and explain your reasoning. Don't hedge.",
+  both:     "When I ask for help with a decision, lead with what you'd do and why — then briefly note the alternatives I'm passing up.",
+  depends:  "When I ask for help with a decision, ask one clarifying question first to figure out what kind of help I actually need.",
+};
+
+const INFO_STYLE = {
+  conclusion: "Lead with the conclusion. Give the context only if I ask.",
+  context:    "Walk me through the reasoning and arrive at the conclusion at the end.",
+  tldr:       "Open with a one-line TL;DR, then provide the supporting detail below it.",
+};
+
+function buildSystemPrompt(a) {
+  const lines = [];
+
+  lines.push('# Who I am working with');
+  lines.push('');
+  if (a.q1) lines.push(a.q1.trim());
+  lines.push('');
+  if (a.q2) { lines.push(`In their own words: "${a.q2.trim()}"`); lines.push(''); }
+  if (a.q3) { lines.push(`The company: ${a.q3.trim()}`); lines.push(''); }
+  if (a.q4) { lines.push(`A recent decision: ${a.q4.trim()}`); lines.push(''); }
+
+  lines.push('# How they think');
+  lines.push('');
+  if (a.q5) lines.push(`- Response to bad news (first 10 min): ${a.q5.trim()}`);
+  if (a.q6) lines.push(`- A good result for them: ${a.q6.trim()}`);
+  if (a.q7) lines.push(`- Proud of: ${a.q7.trim()}`);
+  if (a.q8) lines.push(`- Lesson from a mistake: ${a.q8.trim()}`);
+  lines.push('');
+
+  lines.push('# Current situation');
+  lines.push('');
+  if (a.q9)  lines.push(`- 90-day focus: ${a.q9.trim()}`);
+  if (a.q10) lines.push(`- Biggest risk: ${a.q10.trim()}`);
+  if (a.q11) lines.push(`- Time-sinks to defend against: ${a.q11.trim()}`);
+  if (a.q12) lines.push(`- Energy: ${a.q12.trim()}`);
+  lines.push('');
+
+  lines.push('# Voice and communication');
+  lines.push('');
+  if (a.q13) lines.push(`- A line they were proud of: ${a.q13.trim()}`);
+  if (a.q14) lines.push(`- What irritates them in others' writing: ${a.q14.trim()}`);
+  if (a.q15) {
+    lines.push('- Two notes about the same news (partner vs. team):');
+    lines.push(`  ${a.q15.trim().split('\n').join('\n  ')}`);
+  }
+  if (a.q16) lines.push(`- Giving feedback when something goes wrong: ${a.q16.trim()}`);
+  if (a.q17) lines.push(`- A communicator they admire: ${a.q17.trim()}`);
+  lines.push('');
+
+  lines.push('# How I should work with them');
+  lines.push('');
+  if (a.q18 && DECISION_STYLE[a.q18]) lines.push(`- ${DECISION_STYLE[a.q18]}`);
+  if (a.q19 && INFO_STYLE[a.q19])     lines.push(`- ${INFO_STYLE[a.q19]}`);
+  if (a.q20) lines.push(`- Never write on their behalf: ${a.q20.trim()}`);
+  lines.push("- Match their voice — concise, direct, no padding. Don't use words or phrases they've flagged as theirs-to-avoid.");
+  lines.push('- When drafting on their behalf, hand back something they could send unchanged, not a starting point.');
+  lines.push('- Default to British/international English spelling unless they\'ve written American.');
+  lines.push('');
+
+  if (a.q21 && a.q21.trim()) {
+    lines.push('# Additional context');
+    lines.push('');
+    lines.push(a.q21.trim());
+    lines.push('');
+  }
+
+  if (a.emails && a.emails.trim().length > 40) {
+    lines.push('# Writing samples');
+    lines.push('');
+    lines.push("Below are real emails they've sent. Treat these as the canonical reference for their voice — sentence length, structure, openers, sign-offs, hedges (or lack of), and the specific words they reach for. When drafting, prefer constructions you see here over generic phrasing.");
+    lines.push('');
+    lines.push('```');
+    lines.push(a.emails.trim());
+    lines.push('```');
+    lines.push('');
+  }
+
+  lines.push('---');
+  lines.push(`Profile built ${new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })} via Rumo Intelligence — CEO AI Profile.`);
+
+  return lines.join('\n');
+}
+
+// ─── App ──────────────────────────────────────────────────────────────────────
+const SCREENS = [
+  { id:'intro',    label:'Welcome',   step:0, name:'Introduction',           optional:false },
+  { id:'section1', label:'Section 1', step:1, name:'Who you are',            optional:false },
+  { id:'section2', label:'Section 2', step:2, name:'How you think',          optional:false },
+  { id:'section3', label:'Section 3', step:3, name:'How you work',           optional:false },
+  { id:'section4', label:'Section 4', step:4, name:'How you communicate',    optional:false },
+  { id:'section5', label:'Section 5', step:5, name:'How Claude should work', optional:false },
+  { id:'section6', label:'Section 6', step:6, name:'Email style',            optional:true  },
+  { id:'generate', label:'Generate',  step:6, name:'Generate profile',       optional:false },
+  { id:'results',  label:'Results',   step:6, name:'Your system prompt',     optional:false },
+];
+
+const idx = id => SCREENS.findIndex(s => s.id === id);
+const next = id => SCREENS[Math.min(SCREENS.length - 1, idx(id) + 1)].id;
+const prev = id => SCREENS[Math.max(0, idx(id) - 1)].id;
+
+const blank = {
+  q1:'',q2:'',q3:'',q4:'',
+  q5:'',q6:'',q7:'',q8:'',
+  q9:'',q10:'',q11:'',q12:'',
+  q13:'',q14:'',q15:'',q16:'',q17:'',
+  q18:'',q19:'',q20:'',q21:'',
+  emails:''
+};
+
+function App() {
+  const [screen, setScreen] = useState('intro');
+  const [answers, setAnswers] = useState({ ...blank });
+  const [genPhase, setGenPhase] = useState('idle');
+  const [genProgress, setGenProgress] = useState(0);
+
+  const set = (k, v) => setAnswers(a => ({ ...a, [k]: v }));
+
+  const go = (id) => {
+    setScreen(id);
+    requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  };
+
+  const runGenerate = () => {
+    setGenPhase('loading');
+    setGenProgress(0);
+    const start = Date.now();
+    const total = 3200;
+    const tick = () => {
+      const pct = Math.min(100, ((Date.now() - start) / total) * 100);
+      setGenProgress(pct);
+      if (pct < 100) requestAnimationFrame(tick);
+      else setTimeout(() => go('results'), 350);
+    };
+    requestAnimationFrame(tick);
+  };
+
+  const systemPrompt = useMemo(() => buildSystemPrompt(answers), [answers]);
+
+  const current = SCREENS.find(s => s.id === screen) || SCREENS[0];
+  const showProgress = current.step >= 1 && screen !== 'generate' && screen !== 'results';
+  const dark = screen === 'results';
+  const maxW = (screen === 'intro' || screen === 'results') ? 820 : 760;
+
+  const renderBody = () => {
+    switch (screen) {
+      case 'intro':    return <IntroScreen />;
+      case 'section1': return <SectionOne a={answers} set={set} />;
+      case 'section2': return <SectionTwo a={answers} set={set} />;
+      case 'section3': return <SectionThree a={answers} set={set} />;
+      case 'section4': return <SectionFour a={answers} set={set} />;
+      case 'section5': return <SectionFive a={answers} set={set} />;
+      case 'section6': return <SectionSix a={answers} set={set} />;
+      case 'generate': return <GenerateScreen phase={genPhase} progress={genProgress} />;
+      case 'results':  return <ResultsScreen prompt={systemPrompt} onRestart={() => { setAnswers({ ...blank }); go('intro'); setGenPhase('idle'); setGenProgress(0); }} />;
+      default: return null;
+    }
+  };
+
+  const renderNav = () => {
+    if (screen === 'results') return null;
+    if (screen === 'intro') {
+      return <NavButtons onNext={() => go('section1')} nextLabel="Begin the form" />;
+    }
+    if (screen === 'generate') {
+      if (genPhase === 'loading') return null;
+      return (
+        <div style={{
+          marginTop:40, paddingTop:28, borderTop:'1px solid var(--rule)',
+          display:'flex', alignItems:'center', justifyContent:'space-between'
+        }}>
+          <button type="button" onClick={() => go('section6')}
+            style={{
+              background:'transparent', border:'none', padding:'10px 0',
+              fontWeight:500, fontSize:14, color:'var(--ink)',
+              display:'inline-flex', alignItems:'center', gap:8
+            }}>
+            <span style={{fontSize:16, lineHeight:1}}>←</span> Back
+          </button>
+          <button type="button" onClick={runGenerate}
+            style={{
+              background:'var(--ink)', color:'#fff',
+              border:'none', padding:'16px 32px', borderRadius:10,
+              fontWeight:700, fontSize:15, letterSpacing:'0.02em',
+              boxShadow:'0 1px 2px rgba(0,0,0,.15), 0 18px 40px -20px rgba(0,0,0,.4)',
+              display:'inline-flex', alignItems:'center', gap:12
+            }}>
+            <span style={{
+              width:8, height:8, borderRadius:'50%', background:'var(--accent)'
+            }}/>
+            Generate my AI profile
+          </button>
+        </div>
+      );
+    }
+    if (screen === 'section6') {
+      return <NavButtons
+        onBack={() => go('section5')}
+        onSkip={() => go('generate')} skipLabel="Skip this step"
+        onNext={() => go('generate')} nextLabel="Analyse my writing style" />;
+    }
+    return <NavButtons onBack={() => go(prev(screen))} onNext={() => go(next(screen))} />;
+  };
+
+  return (
+    <div style={{minHeight:'100vh', display:'flex', flexDirection:'column'}}>
+      <Header />
+      {showProgress && (
+        <div style={{maxWidth:1200, margin:'0 auto', width:'100%'}}>
+          <ProgressBar
+            step={current.step}
+            total={6}
+            sectionName={current.name}
+            optional={current.optional}
+          />
+        </div>
+      )}
+      <main style={{flex:1, padding:'28px 48px 48px', display:'flex', flexDirection:'column'}}>
+        <div style={{flex:1, display:'flex', flexDirection:'column'}}>
+          <div key={screen} className="screen-anim" style={{flex:1, display:'flex', flexDirection:'column'}}>
+            <Card dark={dark} maxWidth={maxW}>
+              {renderBody()}
+              {renderNav()}
+            </Card>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
