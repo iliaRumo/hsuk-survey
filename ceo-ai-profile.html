@@ -746,6 +746,108 @@ const ResultsScreen = ({ prompt, onRestart }) => {
   );
 };
 
+// ─── Path selection components ────────────────────────────────────────────────
+const PathCard = ({ selected, onClick, title, body, badges, meta }) => {
+  const [hovered, setHovered] = useState(false);
+  const active = selected || hovered;
+  return (
+    <button type="button" onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position:'relative', textAlign:'left', cursor:'pointer',
+        fontFamily:'inherit', display:'flex', flexDirection:'column',
+        background: active ? '#FFFFFF' : '#FCFAF8',
+        border:`1.5px solid ${active ? 'var(--ink)' : 'var(--rule)'}`,
+        borderRadius:12, padding:'24px 24px 20px',
+        transition:'border-color .15s, background .15s',
+      }}>
+      {selected && (
+        <div style={{
+          position:'absolute', top:14, right:14,
+          width:22, height:22, borderRadius:'50%',
+          background:'var(--ink)', flexShrink:0,
+          display:'flex', alignItems:'center', justifyContent:'center'
+        }}>
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"
+            stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M1.5 5.5l2.5 2.5 5-5" />
+          </svg>
+        </div>
+      )}
+      <div style={{fontWeight:700, fontSize:17, color:'var(--ink)', marginBottom:10, letterSpacing:'-0.01em'}}>{title}</div>
+      <p style={{margin:'0 0 16px', fontSize:14, fontWeight:300, color:'var(--ink-soft)', lineHeight:1.6, flexGrow:1}}>{body}</p>
+      <div style={{display:'flex', gap:8, flexWrap:'wrap', marginBottom:12}}>
+        {badges.map(b => (
+          <span key={b.label} style={{
+            padding:'4px 10px', borderRadius:999, fontSize:12, fontWeight:500,
+            background: b.dark ? 'var(--ink)' : 'transparent',
+            color: b.dark ? '#fff' : 'var(--ink)',
+            border: b.dark ? 'none' : '1px solid var(--rule)',
+          }}>{b.label}</span>
+        ))}
+      </div>
+      <div style={{fontSize:12, color:'var(--muted)', fontWeight:300}}>{meta}</div>
+    </button>
+  );
+};
+
+const PathSelectScreen = ({ selected, onSelect }) => (
+  <>
+    <div style={{
+      fontSize:11, letterSpacing:'0.2em', textTransform:'uppercase',
+      color:'var(--muted)', fontWeight:600, marginBottom:22
+    }}>An onboarding for one</div>
+    <h1 style={{
+      margin:0, fontWeight:800, fontSize:54, lineHeight:1.05,
+      letterSpacing:'-0.03em', color:'var(--ink)', maxWidth:620
+    }}>Build a Claude that<br/>
+      <span style={{position:'relative', whiteSpace:'nowrap'}}>
+        thinks like you.
+        <span style={{
+          position:'absolute', left:0, right:0, bottom:8, height:14,
+          background:'var(--accent)', opacity:.6, zIndex:-1,
+          borderRadius:2, transform:'translateY(2px)'
+        }}/>
+      </span>
+    </h1>
+    <p style={{
+      margin:'20px 0 0', fontWeight:300, fontSize:18, lineHeight:1.55,
+      color:'var(--ink-soft)', maxWidth:560
+    }}>
+      Two ways to build your AI profile. Choose the one that fits how you work.
+    </p>
+    <div style={{
+      display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginTop:36
+    }}>
+      <PathCard
+        selected={selected === 'a'}
+        onClick={() => onSelect('a')}
+        title="Answer questions"
+        body="Twenty-one questions about how you work, what you prioritise, and how you communicate. You answer, Claude builds your profile."
+        badges={[{label:'15 minutes', dark:false}, {label:'No setup', dark:false}]}
+        meta="Start immediately, no tools required"
+      />
+      <PathCard
+        selected={selected === 'b'}
+        onClick={() => onSelect('b')}
+        title="Connect your data"
+        body="About ten minutes of setup. Claude reads your sent emails and recent conversations directly — then asks only the questions your data couldn't answer. If you use Plaud, you can add your voice transcripts too."
+        badges={[{label:'10 min setup', dark:false}, {label:'More precise', dark:true}]}
+        meta="Full setup guide included — Microsoft 365 and Plaud."
+      />
+    </div>
+  </>
+);
+
+const PathBScreen = () => (
+  <div style={{padding:'40px 0 20px'}}>
+    <SectionHead kicker="Path B — Connect your data"
+      title="Coming soon."
+      subtitle="This path is being built. Check back soon — it'll be worth the wait." />
+  </div>
+);
+
 // ─── Intro screen ─────────────────────────────────────────────────────────────
 const IntroScreen = () => (
   <>
@@ -966,8 +1068,9 @@ function buildAnswerMessage(a) {
 
 // ─── App ──────────────────────────────────────────────────────────────────────
 const SCREENS = [
-  { id:'intro',    label:'Welcome',   step:0, name:'Introduction',           optional:false },
-  { id:'section1', label:'Section 1', step:1, name:'Who you are',            optional:false },
+  { id:'pathselect',label:'Path',     step:0, name:'Choose your path',       optional:false },
+  { id:'intro',     label:'Welcome',  step:0, name:'Introduction',           optional:false },
+  { id:'section1',  label:'Section 1',step:1, name:'Who you are',            optional:false },
   { id:'section2', label:'Section 2', step:2, name:'How you think',          optional:false },
   { id:'section3', label:'Section 3', step:3, name:'How you work',           optional:false },
   { id:'section4', label:'Section 4', step:4, name:'How you communicate',    optional:false },
@@ -991,7 +1094,8 @@ const blank = {
 };
 
 function App() {
-  const [screen, setScreen] = useState('intro');
+  const [screen, setScreen] = useState('pathselect');
+  const [selectedPath, setSelectedPath] = useState(null);
   const [answers, setAnswers] = useState({ ...blank });
   const [genPhase, setGenPhase] = useState('idle');
   const [genProgress, setGenProgress] = useState(0);
@@ -1051,11 +1155,13 @@ function App() {
   const current = SCREENS.find(s => s.id === screen) || SCREENS[0];
   const showProgress = current.step >= 1 && screen !== 'generate' && screen !== 'results';
   const dark = screen === 'results';
-  const maxW = (screen === 'intro' || screen === 'results') ? 820 : 760;
+  const maxW = (screen === 'pathselect' || screen === 'intro' || screen === 'results' || screen === 'pathb') ? 820 : 760;
 
   const renderBody = () => {
     switch (screen) {
-      case 'intro':    return <IntroScreen />;
+      case 'pathselect': return <PathSelectScreen selected={selectedPath} onSelect={setSelectedPath} />;
+      case 'pathb':      return <PathBScreen />;
+      case 'intro':      return <IntroScreen />;
       case 'section1': return <SectionOne a={answers} set={set} />;
       case 'section2': return <SectionTwo a={answers} set={set} />;
       case 'section3': return <SectionThree a={answers} set={set} />;
@@ -1063,13 +1169,53 @@ function App() {
       case 'section5': return <SectionFive a={answers} set={set} />;
       case 'section6': return <SectionSix a={answers} set={set} />;
       case 'generate': return <GenerateScreen phase={genPhase} progress={genProgress} error={genError} />;
-      case 'results':  return <ResultsScreen prompt={generatedPrompt || systemPrompt} onRestart={() => { setAnswers({ ...blank }); go('intro'); setGenPhase('idle'); setGenProgress(0); setGeneratedPrompt(null); setGenError(null); }} />;
+      case 'results':  return <ResultsScreen prompt={generatedPrompt || systemPrompt} onRestart={() => { setAnswers({ ...blank }); setSelectedPath(null); go('pathselect'); setGenPhase('idle'); setGenProgress(0); setGeneratedPrompt(null); setGenError(null); }} />;
       default: return null;
     }
   };
 
   const renderNav = () => {
     if (screen === 'results') return null;
+    if (screen === 'pathselect') {
+      return (
+        <div style={{
+          marginTop:40, paddingTop:28, borderTop:'1px solid var(--rule)',
+          display:'flex', justifyContent:'flex-end'
+        }}>
+          <button type="button"
+            disabled={!selectedPath}
+            onClick={() => go(selectedPath === 'b' ? 'pathb' : 'intro')}
+            style={{
+              background: selectedPath ? 'var(--ink)' : '#dcdcdc',
+              color:'#fff', border:'none', padding:'14px 26px', borderRadius:8,
+              fontWeight:600, fontSize:14, letterSpacing:'0.02em',
+              display:'inline-flex', alignItems:'center', gap:10,
+              cursor: selectedPath ? 'pointer' : 'not-allowed',
+              opacity: selectedPath ? 1 : .6,
+              boxShadow: selectedPath ? '0 1px 2px rgba(0,0,0,.1)' : 'none',
+            }}>
+            Continue <span style={{fontSize:16, lineHeight:1}}>→</span>
+          </button>
+        </div>
+      );
+    }
+    if (screen === 'pathb') {
+      return (
+        <div style={{
+          marginTop:40, paddingTop:28, borderTop:'1px solid var(--rule)',
+          display:'flex', justifyContent:'flex-start'
+        }}>
+          <button type="button" onClick={() => go('pathselect')}
+            style={{
+              background:'transparent', border:'none', padding:'10px 0',
+              fontWeight:500, fontSize:14, color:'var(--ink)',
+              display:'inline-flex', alignItems:'center', gap:8
+            }}>
+            <span style={{fontSize:16, lineHeight:1}}>←</span> Back
+          </button>
+        </div>
+      );
+    }
     if (screen === 'intro') {
       return <NavButtons onNext={() => go('section1')} nextLabel="Begin the form" />;
     }
