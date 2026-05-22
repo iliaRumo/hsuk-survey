@@ -836,7 +836,19 @@ const StepBadge = ({ label, dark = false }) => (
 
 const ScreenshotImage = ({ src }) => {
   const [failed, setFailed] = useState(false);
-  const [hovered, setHovered] = useState(false);
+  const [overlayVisible, setOverlayVisible] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  const handleMouseEnter = () => {
+    timerRef.current = setTimeout(() => setOverlayVisible(true), 150);
+  };
+  const handleMouseLeave = () => {
+    clearTimeout(timerRef.current);
+    setOverlayVisible(false);
+  };
+
   if (failed) return (
     <div style={{
       width:'100%', borderRadius:8, border:'1px dashed #e0dbd5',
@@ -849,17 +861,32 @@ const ScreenshotImage = ({ src }) => {
     </div>
   );
   return (
-    <img src={src} alt=""
-      onError={() => setFailed(true)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        width:'100%', borderRadius:8, border:'1px solid #e0dbd5', display:'block',
-        transition:'transform 0.2s ease, box-shadow 0.2s ease',
-        transform: hovered ? 'scale(1.08)' : 'scale(1)',
-        boxShadow: hovered ? '0 8px 24px rgba(0,0,0,0.13)' : 'none',
-        cursor:'pointer',
-      }} />
+    <>
+      <img src={src} alt=""
+        onError={() => setFailed(true)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          width:'100%', borderRadius:8, border:'1px solid #e0dbd5',
+          display:'block', cursor:'zoom-in',
+        }} />
+      <div style={{
+        position:'fixed', inset:0,
+        background:'rgba(0,0,0,0.75)',
+        display:'flex', alignItems:'center', justifyContent:'center',
+        zIndex:9999,
+        opacity: overlayVisible ? 1 : 0,
+        transition:'opacity 0.2s ease',
+        pointerEvents:'none',
+      }}>
+        <img src={src} alt="" style={{
+          maxWidth:'80vw', maxHeight:'80vh',
+          borderRadius:12,
+          boxShadow:'0 20px 60px rgba(0,0,0,0.5)',
+          display:'block',
+        }} />
+      </div>
+    </>
   );
 };
 
