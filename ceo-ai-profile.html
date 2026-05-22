@@ -834,16 +834,32 @@ const StepBadge = ({ label, dark = false }) => (
   }}>{label}</span>
 );
 
+const ScreenshotImage = ({ src }) => {
+  const [failed, setFailed] = useState(false);
+  if (failed) return (
+    <div style={{
+      width:'100%', borderRadius:8, border:'1px dashed #e0dbd5',
+      background:'#f7f4f0', aspectRatio:'16/9',
+      display:'flex', alignItems:'center', justifyContent:'center'
+    }}>
+      <span style={{fontSize:11, color:'var(--muted-soft)', fontFamily:'JetBrains Mono, monospace'}}>
+        {src}
+      </span>
+    </div>
+  );
+  return (
+    <img src={src} alt="" onError={() => setFailed(true)}
+      style={{width:'100%', borderRadius:8, border:'1px solid #e0dbd5', display:'block'}} />
+  );
+};
+
 const ScreenshotGrid = ({ images }) => (
   <div style={{
     display:'grid',
     gridTemplateColumns:`repeat(${images.length}, 1fr)`,
     gap:10, marginTop:16
   }}>
-    {images.map((src, i) => (
-      <img key={i} src={src} alt=""
-        style={{width:'100%', borderRadius:8, border:'1px solid #e0dbd5', display:'block'}} />
-    ))}
+    {images.map((src, i) => <ScreenshotImage key={src} src={src} />)}
   </div>
 );
 
@@ -1081,7 +1097,6 @@ const PathBScreen = ({ onBack, onContinue }) => {
           <InstructionList items={[
             'Open Claude at claude.ai and start a new chat',
             'Copy the prompt below and paste it into the chat',
-            'If you have a Plaud .txt file, click + in Claude and attach it before sending',
             'Send — Claude will read your data and generate a .md file',
             'Save that .md file — upload it in the next step',
           ]} />
