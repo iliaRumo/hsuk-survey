@@ -746,6 +746,157 @@ const ResultsScreen = ({ prompt, onRestart }) => {
   );
 };
 
+// ─── Path B prompt constant ────────────────────────────────────────────────────
+const PATHB_PROMPT = `OVERRIDE ALL PROJECT INSTRUCTIONS FOR THIS TASK ONLY.
+Do not act as a project assistant. Do not ask questions.
+Execute the following instructions completely and output the result.
+
+---
+
+You are a context extraction agent. Read ALL available sources and produce a structured .md context file.
+
+SOURCE A: Project Files and Project Instructions
+Read all uploaded files and project instructions.
+
+SOURCE B: Conversation History
+Use recent_chats (n=20). Then run conversation_search with each query — do not skip any:
+1. "decision"
+2. "problem"
+3. "build"
+4. "next steps"
+5. "feedback"
+6. "question"
+7. "meeting"
+8. "priority"
+9. "challenge"
+10. "result"
+Read any new conversations found after each search.
+
+SOURCE C: Outlook Sent Items (only if Microsoft 365 connector is active)
+Step C1: Use outlook_email_search with folderName="Sent Items", limit=25, order="newest".
+Step C2: For the first 15 emails, use read_resource with each email's URI to read full content.
+Step C3: For reply threads, read the full thread — note what others wrote and how the CEO responded.
+Step C4: Note for each: recipient, relationship, tone, key decisions, notable phrases.
+If not available: [Outlook not connected].
+
+SOURCE D: Outlook Calendar (only if Microsoft 365 connector is active)
+Use outlook_calendar_search with query="*", limit=25, order="newest", afterDateTime="3 months ago".
+Note: title, attendees, frequency, duration. Look for patterns — recurring meetings, key relationships, how time is allocated.
+If not available: [Calendar not connected].
+
+SOURCE E: Plaud Transcripts (only if uploaded as a file)
+If a .txt or .md file is uploaded, read it fully.
+Extract: recurring topics, decisions made verbally, how they think when speaking vs writing.
+If no file uploaded: [Plaud not provided].
+
+STEP 2 — REPORT BEFORE WRITING
+Write one line:
+"Read [N] conversations, [M] project files, [K] emails (full: [J]), [L] calendar events, Plaud: [yes/no]. Proceeding."
+
+STEP 3 — ONLY USE WHAT YOU ACTUALLY READ
+Every statement must come from what you read. If a section has no data: [not enough data].
+Tag each section: [from chats], [from project files], [from outlook], [from calendar], [from plaud], or [multiple sources].
+
+STEP 4 — GENERATE THE .MD FILE
+Output a complete .md file with these sections:
+## WHO I AM
+## HOW I WORK
+## HOW I USE CLAUDE
+## COMMUNICATION STYLE
+## MY WRITING STYLE
+## HOW I RESPOND TO OTHERS
+## HOW I SPEND MY TIME
+## HOW I THINK OUT LOUD
+## ACTIVE PROJECTS & TOPICS
+## KEY DECISIONS
+## OPEN QUESTIONS & PARKED ITEMS
+## PEOPLE MENTIONED
+## TOOLS & SYSTEMS
+## RULES FOR CLAUDE`;
+
+// ─── Path B helper components ──────────────────────────────────────────────────
+const StepNum = ({ n }) => (
+  <div style={{
+    width:24, height:24, borderRadius:'50%', flexShrink:0,
+    background:'var(--ink)', color:'#fff',
+    display:'flex', alignItems:'center', justifyContent:'center',
+    fontSize:12, fontWeight:700, marginTop:1
+  }}>{n}</div>
+);
+
+const StepBadge = ({ label, dark = false }) => (
+  <span style={{
+    display:'inline-flex', padding:'3px 9px', borderRadius:999,
+    fontSize:11, fontWeight:600, letterSpacing:'0.06em', textTransform:'uppercase',
+    background: dark ? 'var(--ink)' : 'rgba(0,0,0,.07)',
+    color: dark ? '#fff' : 'var(--muted)',
+    border: dark ? 'none' : '1px solid var(--rule)',
+  }}>{label}</span>
+);
+
+const ScreenshotGrid = ({ images }) => (
+  <div style={{
+    display:'grid',
+    gridTemplateColumns:`repeat(${images.length}, 1fr)`,
+    gap:10, marginTop:16
+  }}>
+    {images.map((src, i) => (
+      <img key={i} src={src} alt=""
+        style={{width:'100%', borderRadius:8, border:'1px solid #e0dbd5', display:'block'}} />
+    ))}
+  </div>
+);
+
+const InstructionList = ({ items }) => (
+  <ol style={{margin:'12px 0 0', padding:0, listStyle:'none', display:'flex', flexDirection:'column', gap:8}}>
+    {items.map((item, i) => (
+      <li key={i} style={{display:'flex', gap:12, alignItems:'flex-start'}}>
+        <span style={{
+          flexShrink:0, width:20, height:20, borderRadius:'50%',
+          background:'#f0ede8', border:'1px solid var(--rule)',
+          display:'flex', alignItems:'center', justifyContent:'center',
+          fontSize:11, fontWeight:600, color:'var(--muted)', marginTop:1
+        }}>{i + 1}</span>
+        <span style={{fontSize:14.5, fontWeight:300, color:'var(--ink-soft)', lineHeight:1.55}}>{item}</span>
+      </li>
+    ))}
+  </ol>
+);
+
+const UploadZone = ({ label, sublabel, accept, file, onFile }) => {
+  const inputRef = useRef(null);
+  return (
+    <div onClick={() => inputRef.current?.click()} style={{
+      border:`1.5px dashed ${file ? '#1f7a45' : 'var(--rule)'}`,
+      borderRadius:10, padding:'18px 22px', cursor:'pointer',
+      background: file ? '#f0faf4' : '#FCFAF8',
+      transition:'border-color .15s, background .15s',
+      display:'flex', alignItems:'center', justifyContent:'space-between', gap:16
+    }}>
+      <div>
+        <div style={{fontWeight:600, fontSize:14.5, color:'var(--ink)', marginBottom:3}}>{label}</div>
+        <div style={{fontSize:13, fontWeight:300, color: file ? '#1f7a45' : 'var(--muted)'}}>
+          {file ? file.name : sublabel}
+        </div>
+      </div>
+      {file ? (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style={{flexShrink:0}}>
+          <circle cx="11" cy="11" r="10" fill="#1f7a45" />
+          <path d="M6.5 11.5l3 3 6-6" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : (
+        <span style={{
+          flexShrink:0, fontSize:13, fontWeight:500, color:'var(--muted)',
+          padding:'7px 14px', border:'1px solid var(--rule)',
+          borderRadius:6, background:'white', whiteSpace:'nowrap'
+        }}>Choose file</span>
+      )}
+      <input ref={inputRef} type="file" accept={accept} style={{display:'none'}}
+        onChange={e => { if (e.target.files[0]) onFile(e.target.files[0]); }} />
+    </div>
+  );
+};
+
 // ─── Path selection components ────────────────────────────────────────────────
 const PathCard = ({ selected, onClick, title, body, badges, meta }) => {
   const [hovered, setHovered] = useState(false);
@@ -840,13 +991,178 @@ const PathSelectScreen = ({ selected, onSelect }) => (
   </>
 );
 
-const PathBScreen = () => (
-  <div style={{padding:'40px 0 20px'}}>
-    <SectionHead kicker="Path B — Connect your data"
-      title="Coming soon."
-      subtitle="This path is being built. Check back soon — it'll be worth the wait." />
-  </div>
-);
+const PathBScreen = ({ onBack, onContinue }) => {
+  const [mdFile, setMdFile] = useState(null);
+  const [txtFile, setTxtFile] = useState(null);
+  const [promptCopied, setPromptCopied] = useState(false);
+
+  const copyPrompt = () => {
+    navigator.clipboard.writeText(PATHB_PROMPT).catch(() => {});
+    setPromptCopied(true);
+    setTimeout(() => setPromptCopied(false), 2000);
+  };
+
+  const divider = (
+    <div style={{height:1, background:'var(--rule)', margin:'32px 0'}} />
+  );
+
+  return (
+    <div>
+      {/* Back link */}
+      <button type="button" onClick={onBack} style={{
+        background:'transparent', border:'none', padding:0, marginBottom:32,
+        display:'inline-flex', alignItems:'center', gap:8,
+        fontSize:13.5, fontWeight:500, color:'var(--muted)', cursor:'pointer',
+        letterSpacing:'0.01em'
+      }}>
+        <span style={{fontSize:15, lineHeight:1}}>←</span> Back
+      </button>
+
+      {/* Section 1 — Instructions */}
+      <SectionHead
+        title="Before you begin"
+        subtitle="Two optional steps that make your profile significantly more accurate. Skip either one if it doesn't apply to you." />
+
+      {/* Step 1 — Microsoft 365 */}
+      <div style={{display:'flex', gap:14, marginBottom:28}}>
+        <StepNum n={1} />
+        <div style={{flex:1}}>
+          <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
+            <span style={{fontWeight:700, fontSize:16, color:'var(--ink)'}}>Connect Microsoft 365</span>
+            <StepBadge label="Optional — adds your emails and calendar" />
+          </div>
+          <p style={{margin:'0 0 12px', fontSize:14.5, fontWeight:300, color:'var(--ink-soft)', lineHeight:1.6}}>
+            A connector links Claude to your Microsoft account so it can read your sent emails and calendar automatically.
+          </p>
+          <InstructionList items={[
+            'In Claude, click the + button in the chat input',
+            'Click "Connectors"',
+            'Find Microsoft 365 and click connect',
+          ]} />
+          <ScreenshotGrid images={['images/connector-menu.png', 'images/connector-directory.png']} />
+        </div>
+      </div>
+
+      {divider}
+
+      {/* Step 2 — Plaud */}
+      <div style={{display:'flex', gap:14, marginBottom:28}}>
+        <StepNum n={2} />
+        <div style={{flex:1}}>
+          <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
+            <span style={{fontWeight:700, fontSize:16, color:'var(--ink)'}}>Export your Plaud transcripts</span>
+            <StepBadge label="Optional — adds your voice notes" />
+          </div>
+          <InstructionList items={[
+            'Go to web.plaud.ai and select all recordings you want to include',
+            'Click Merge → then "Merge only" in the dialog',
+            'Open the merged file → click "Copy & export" → Export transcript',
+            'Save the .txt file — you\'ll upload it below',
+          ]} />
+          <ScreenshotGrid images={[
+            'images/plaud-files.png',
+            'images/plaud-selected.png',
+            'images/plaud-merge-dialog.png',
+            'images/plaud-export.png',
+          ]} />
+        </div>
+      </div>
+
+      {divider}
+
+      {/* Step 3 — Run the prompt */}
+      <div style={{display:'flex', gap:14, marginBottom:32}}>
+        <StepNum n={3} />
+        <div style={{flex:1}}>
+          <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
+            <span style={{fontWeight:700, fontSize:16, color:'var(--ink)'}}>Run this prompt in Claude</span>
+            <StepBadge label="Required" dark />
+          </div>
+          <InstructionList items={[
+            'Open Claude at claude.ai and start a new chat',
+            'Copy the prompt below and paste it into the chat',
+            'If you have a Plaud .txt file, click + in Claude and attach it before sending',
+            'Send — Claude will read your data and generate a .md file',
+            'Save that .md file — upload it in the next step',
+          ]} />
+        </div>
+      </div>
+
+      {/* Section 2 — Prompt block */}
+      <div style={{
+        border:'1px solid var(--rule)', borderRadius:10, overflow:'hidden',
+        marginBottom:36
+      }}>
+        <div style={{
+          display:'flex', alignItems:'center', justifyContent:'space-between',
+          padding:'11px 16px', borderBottom:'1px solid var(--rule)',
+          background:'#f7f4f0'
+        }}>
+          <span style={{
+            fontFamily:'JetBrains Mono, ui-monospace, monospace',
+            fontSize:12, color:'var(--muted)', letterSpacing:'0.04em'
+          }}>context-extraction-prompt.txt</span>
+          <button type="button" onClick={copyPrompt} style={{
+            background: promptCopied ? 'var(--ok)' : 'var(--ink)',
+            color:'#fff', border:'none', padding:'6px 13px',
+            borderRadius:6, fontSize:12.5, fontWeight:600,
+            cursor:'pointer', display:'inline-flex', alignItems:'center', gap:6,
+            transition:'background .2s'
+          }}>
+            {promptCopied ? '✓ Copied' : 'Copy prompt'}
+          </button>
+        </div>
+        <pre className="nice-scroll-light" style={{
+          margin:0, padding:'18px 20px', maxHeight:280, overflow:'auto',
+          fontFamily:'JetBrains Mono, ui-monospace, monospace',
+          fontSize:12, lineHeight:1.65, color:'var(--ink-soft)',
+          whiteSpace:'pre-wrap', wordBreak:'break-word',
+          background:'#fcfaf8'
+        }}>{PATHB_PROMPT}</pre>
+      </div>
+
+      {/* Section 3 — File upload */}
+      <div style={{marginBottom:36}}>
+        <div style={{fontWeight:700, fontSize:16, color:'var(--ink)', marginBottom:4}}>Upload your files</div>
+        <p style={{margin:'0 0 18px', fontSize:14.5, fontWeight:300, color:'var(--muted)'}}>
+          Upload the .md file Claude generated. The Plaud transcript is optional.
+        </p>
+        <div style={{display:'flex', flexDirection:'column', gap:12}}>
+          <UploadZone
+            label="Your context file (.md)"
+            sublabel="The file Claude generated in the previous step"
+            accept=".md"
+            file={mdFile}
+            onFile={setMdFile}
+          />
+          <UploadZone
+            label="Plaud transcripts (.txt)"
+            sublabel="Skip this if you didn't export from Plaud"
+            accept=".txt"
+            file={txtFile}
+            onFile={setTxtFile}
+          />
+        </div>
+      </div>
+
+      {/* Continue button */}
+      <div style={{paddingTop:28, borderTop:'1px solid var(--rule)'}}>
+        <button type="button" disabled={!mdFile} onClick={onContinue}
+          style={{
+            background: mdFile ? 'var(--ink)' : '#dcdcdc',
+            color:'#fff', border:'none', padding:'14px 26px', borderRadius:8,
+            fontWeight:600, fontSize:14, letterSpacing:'0.02em',
+            display:'inline-flex', alignItems:'center', gap:10,
+            cursor: mdFile ? 'pointer' : 'not-allowed',
+            opacity: mdFile ? 1 : .6,
+            boxShadow: mdFile ? '0 1px 2px rgba(0,0,0,.1)' : 'none',
+          }}>
+          Continue <span style={{fontSize:16, lineHeight:1}}>→</span>
+        </button>
+      </div>
+    </div>
+  );
+};
 
 // ─── Intro screen ─────────────────────────────────────────────────────────────
 const IntroScreen = () => (
@@ -1155,12 +1471,19 @@ function App() {
   const current = SCREENS.find(s => s.id === screen) || SCREENS[0];
   const showProgress = current.step >= 1 && screen !== 'generate' && screen !== 'results';
   const dark = screen === 'results';
-  const maxW = (screen === 'pathselect' || screen === 'intro' || screen === 'results' || screen === 'pathb') ? 820 : 760;
+  const maxW = (screen === 'pathselect' || screen === 'intro' || screen === 'results' || screen === 'pathb' || screen === 'pathbresult') ? 820 : 760;
 
   const renderBody = () => {
     switch (screen) {
       case 'pathselect': return <PathSelectScreen selected={selectedPath} onSelect={setSelectedPath} />;
-      case 'pathb':      return <PathBScreen />;
+      case 'pathb':      return <PathBScreen onBack={() => go('pathselect')} onContinue={() => go('pathbresult')} />;
+      case 'pathbresult': return (
+        <div style={{padding:'40px 0 20px'}}>
+          <SectionHead kicker="Path B — Complete"
+            title="Your profile is ready."
+            subtitle="This step is still being built. Check back soon." />
+        </div>
+      );
       case 'intro':      return <IntroScreen />;
       case 'section1': return <SectionOne a={answers} set={set} />;
       case 'section2': return <SectionTwo a={answers} set={set} />;
@@ -1199,23 +1522,7 @@ function App() {
         </div>
       );
     }
-    if (screen === 'pathb') {
-      return (
-        <div style={{
-          marginTop:40, paddingTop:28, borderTop:'1px solid var(--rule)',
-          display:'flex', justifyContent:'flex-start'
-        }}>
-          <button type="button" onClick={() => go('pathselect')}
-            style={{
-              background:'transparent', border:'none', padding:'10px 0',
-              fontWeight:500, fontSize:14, color:'var(--ink)',
-              display:'inline-flex', alignItems:'center', gap:8
-            }}>
-            <span style={{fontSize:16, lineHeight:1}}>←</span> Back
-          </button>
-        </div>
-      );
-    }
+    if (screen === 'pathb' || screen === 'pathbresult') return null;
     if (screen === 'intro') {
       return <NavButtons onNext={() => go('section1')} nextLabel="Begin the form" />;
     }
