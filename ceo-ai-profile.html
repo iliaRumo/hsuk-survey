@@ -632,9 +632,9 @@ const NavButtons = ({ onBack, onNext, nextLabel = 'Continue', onSkip, skipLabel,
 // ─── Section screens ──────────────────────────────────────────────────────────
 const SectionOne = ({ a, set }) => (
   <>
-    <SectionHead kicker="Section 1 — Who you are"
+    <SectionHead kicker="Section 1 -- Who you are"
       title="Let's start with you."
-      subtitle="A few sentences in your own words. Don't worry about polish — write the way you actually think." />
+      subtitle="A few sentences in your own words. Don't worry about polish -- write the way you actually think." />
     <div style={{display:'flex', flexDirection:'column', gap:28}}>
       <div>
         <QLabel n={1} label="What is your name and what company do you lead?" />
@@ -643,7 +643,7 @@ const SectionOne = ({ a, set }) => (
       </div>
       <div>
         <QLabel n={2} label="Describe your work in one sentence."
-          hint="Not your title — what you actually do every day." />
+          hint="Not your title -- what you actually do every day." />
         <TextField value={a.q2} onChange={v => set('q2', v)} rows={2}
           placeholder="I make sure the right people are working on the right things, and unblock them when they get stuck." />
       </div>
@@ -655,7 +655,7 @@ const SectionOne = ({ a, set }) => (
       </div>
       <div>
         <QLabel n={4} label="What decision did you make this week?"
-          hint="Describe it briefly — the more concrete, the better." />
+          hint="Describe it briefly -- the more concrete, the better." />
         <TextField value={a.q4} onChange={v => set('q4', v)} rows={3}
           placeholder="Postponed the H2 brand refresh by one quarter to free engineering capacity for the onboarding rewrite." />
       </div>
@@ -665,19 +665,19 @@ const SectionOne = ({ a, set }) => (
 
 const SectionTwo = ({ a, set }) => (
   <>
-    <SectionHead kicker="Section 2 — How you think"
+    <SectionHead kicker="Section 2 -- How you think"
       title="How you make decisions."
       subtitle="There are no right answers. Claude needs to understand your reasoning style so it can match it." />
     <div style={{display:'flex', flexDirection:'column', gap:28}}>
       <div>
-        <QLabel n={5} label="When you receive bad news — what do you do in the first 10 minutes?" />
+        <QLabel n={5} label="When you receive bad news -- what do you do in the first 10 minutes?" />
         <TextField value={a.q5} onChange={v => set('q5', v)} rows={3}
           placeholder="I close my laptop, take a walk, and write down what I know, what I don't know, and who I need to call." />
       </div>
       <div>
-        <QLabel n={6} label={'Finish this sentence: "A good result for me is when…"'} />
+        <QLabel n={6} label={'Finish this sentence: "A good result for me is when..."'} />
         <TextField value={a.q6} onChange={v => set('q6', v)} rows={2}
-          placeholder="…the team made the call without needing me in the room." />
+          placeholder="...the team made the call without needing me in the room." />
       </div>
       <div>
         <QLabel n={7} label="Describe a decision you're most proud of."
@@ -696,9 +696,9 @@ const SectionTwo = ({ a, set }) => (
 
 const SectionThree = ({ a, set }) => (
   <>
-    <SectionHead kicker="Section 3 — How you work"
+    <SectionHead kicker="Section 3 -- How you work"
       title="Your next ninety days."
-      subtitle="Give Claude the context it needs to be useful right now — not in the abstract, but in the situation you're actually in." />
+      subtitle="Give Claude the context it needs to be useful right now -- not in the abstract, but in the situation you're actually in." />
     <div style={{display:'flex', flexDirection:'column', gap:28}}>
       <div>
         <QLabel n={9} label="What's happening in your company right now?"
@@ -728,14 +728,14 @@ const SectionThree = ({ a, set }) => (
 
 const SectionFour = ({ a, set }) => (
   <>
-    <SectionHead kicker="Section 4 — How you communicate"
+    <SectionHead kicker="Section 4 -- How you communicate"
       title="Your voice."
       subtitle="The way you write is how Claude will write for you. The more specific, the more it sounds like you." />
     <div style={{display:'flex', flexDirection:'column', gap:28}}>
       <div>
-        <QLabel n={13} label="Quote a phrase from an email you're proud of — or describe the situation." />
+        <QLabel n={13} label="Quote a phrase from an email you're proud of -- or describe the situation." />
         <TextField value={a.q13} onChange={v => set('q13', v)} rows={3}
-          placeholder={'"We won\'t be moving forward, but I want to be honest about why — it has more to do with our timing than with your proposal."'} />
+          placeholder={'"We won\'t be moving forward, but I want to be honest about why -- it has more to do with our timing than with your proposal."'} />
       </div>
       <div>
         <QLabel n={14} label="What irritates you about emails you receive?" />
@@ -746,7 +746,7 @@ const SectionFour = ({ a, set }) => (
         <QLabel n={15} label='Write one sentence to a partner, and one to your team, about the same news.'
           hint='"We are delaying the launch by two weeks." Two short notes.' />
         <TextField value={a.q15} onChange={v => set('q15', v)} rows={5}
-          placeholder={"To partner: Quick heads up — we're pushing the launch by two weeks to land it properly. I'll send a revised plan Friday.\n\nTo team: We're moving launch to the 28th. Quality over date. I'll explain in tomorrow's standup."} />
+          placeholder={"To partner: Quick heads up -- we're pushing the launch by two weeks to land it properly. I'll send a revised plan Friday.\n\nTo team: We're moving launch to the 28th. Quality over date. I'll explain in tomorrow's standup."} />
       </div>
       <div>
         <QLabel n={16} label="How do you give feedback to your team when something goes wrong?" />
@@ -757,7 +757,7 @@ const SectionFour = ({ a, set }) => (
         <QLabel n={17} label="Whose communication style do you respect?"
           hint="What, specifically, do you admire?" />
         <TextField value={a.q17} onChange={v => set('q17', v)} rows={3}
-          placeholder="Stewart Butterfield's old Slack memos. He explained why before he asked for what — and he never hid the trade-offs." />
+          placeholder="Stewart Butterfield's old Slack memos. He explained why before he asked for what -- and he never hid the trade-offs." />
       </div>
     </div>
   </>
@@ -765,12 +765,12 @@ const SectionFour = ({ a, set }) => (
 
 const SectionFive = ({ a, set }) => (
   <>
-    <SectionHead kicker="Section 5 — How Claude should work"
+    <SectionHead kicker="Section 5 -- How Claude should work"
       title="How you want to be helped."
-      subtitle="A few preferences so Claude lands its first reply in the right shape — not the second or third." />
+      subtitle="A few preferences so Claude lands its first reply in the right shape -- not the second or third." />
     <div style={{display:'flex', flexDirection:'column', gap:32}}>
       <div>
-        <QLabel n={18} label="When you need help with a decision — what do you want?" />
+        <QLabel n={18} label="When you need help with a decision -- what do you want?" />
         <Choice value={a.q18} onChange={v => set('q18', v)} columns={2}
           options={[
             { value:'options', label:'Show me the options', sub:"Lay out the trade-offs. I'll pick." },
@@ -790,13 +790,13 @@ const SectionFive = ({ a, set }) => (
       </div>
       <div>
         <QLabel n={20} label="What should Claude never write on your behalf?"
-          hint="Topics, tone, phrasing — anything that wouldn't sound like you." />
+          hint="Topics, tone, phrasing -- anything that wouldn't sound like you." />
         <TextField value={a.q20} onChange={v => set('q20', v)} rows={4}
-          placeholder={"Don't use 'just', 'quick thought', or 'circling back'. Don't write condolence notes or anything involving someone's family — I'll do those myself."} />
+          placeholder={"Don't use 'just', 'quick thought', or 'circling back'. Don't write condolence notes or anything involving someone's family -- I'll do those myself."} />
       </div>
       <div>
         <QLabel n={21} label="Anything else worth knowing?"
-          hint="Optional — about you, your company, your situation." />
+          hint="Optional -- about you, your company, your situation." />
         <TextField value={a.q21} onChange={v => set('q21', v)} rows={4}
           placeholder="I'm Brazilian, based in Lisbon, working across PT/UK/US timezones. English-first but Portuguese with my exec team." />
       </div>
@@ -813,11 +813,11 @@ const SectionSix = ({ a, set }) => (
       fontSize:11, letterSpacing:'0.14em', textTransform:'uppercase',
       fontWeight:600, color:'var(--ink)', marginBottom:18
     }}>
-      Optional — skip if you prefer
+      Optional -- skip if you prefer
     </div>
     <SectionHead
       title="Show us how you write."
-      subtitle="Paste 3–5 of your sent emails below. Claude will analyse your real writing style and make your profile significantly more accurate." />
+      subtitle="Paste 3-5 of your sent emails below. Claude will analyse your real writing style and make your profile significantly more accurate." />
     <div className="field" style={{
       border:'1px solid var(--rule)', borderRadius:10,
       background:'#FCFAF8', transition:'box-shadow .2s, border-color .2s',
@@ -825,7 +825,7 @@ const SectionSix = ({ a, set }) => (
       <textarea
         value={a.emails}
         onChange={e => set('emails', e.target.value)}
-        placeholder="Paste your emails here — remove any sensitive names or details if needed."
+        placeholder="Paste your emails here -- remove any sensitive names or details if needed."
         rows={14}
         style={{
           width:'100%', border:0, background:'transparent', padding:'18px 20px',
@@ -846,18 +846,18 @@ const SectionSix = ({ a, set }) => (
 // ─── Generate screen ──────────────────────────────────────────────────────────
 const GenerateScreen = ({ phase, progress, error }) => {
   const lines = [
-    'Reading your answers…',
-    'Mapping decision patterns…',
-    'Calibrating voice and tone…',
-    'Drafting your system prompt…',
-    'Polishing the final lines…',
+    'Reading your answers...',
+    'Mapping decision patterns...',
+    'Calibrating voice and tone...',
+    'Drafting your system prompt...',
+    'Polishing the final lines...',
   ];
   const step = Math.min(lines.length - 1, Math.floor((progress / 100) * lines.length));
   return (
     <div style={{padding:'40px 0 20px'}}>
       <SectionHead kicker="Almost done"
-        title={phase === 'idle' ? 'Ready when you are.' : 'Building your profile…'}
-        subtitle={phase === 'idle' ? "We'll synthesise everything you wrote into a single system prompt — written in the voice of someone briefing Claude on you." : ' '} />
+        title={phase === 'idle' ? 'Ready when you are.' : 'Building your profile...'}
+        subtitle={phase === 'idle' ? "We'll synthesise everything you wrote into a single system prompt -- written in the voice of someone briefing Claude on you." : ' '} />
       {phase === 'idle' ? (
         <>
           <ul style={{
@@ -1058,11 +1058,11 @@ const ResultsScreen = ({ prompt, onRestart }) => {
 };
 
 // ─── Path B prompt constant ────────────────────────────────────────────────────
-// PATHB_PROMPT — defined in plain <script> above
+// PATHB_PROMPT -- defined in plain <script> above
 
 
 // ─── Path B interview system prompt ──────────────────────────────────────────
-// PATHB_INTERVIEW_SYSTEM — defined in plain <script> above
+// PATHB_INTERVIEW_SYSTEM -- defined in plain <script> above
 
 // ─── Path B helper components ──────────────────────────────────────────────────
 const StepNum = ({ n }) => (
@@ -1404,9 +1404,9 @@ const PathSelectScreen = ({ selected, onSelect }) => (
         selected={selected === 'b'}
         onClick={() => onSelect('b')}
         title="Connect your data"
-        body="About ten minutes of setup. Claude reads your sent emails and recent conversations directly — then asks only the questions your data couldn't answer. If you use Plaud, you can add your voice transcripts too."
+        body="About ten minutes of setup. Claude reads your sent emails and recent conversations directly -- then asks only the questions your data couldn't answer. If you use Plaud, you can add your voice transcripts too."
         badges={[{label:'10 min setup', dark:false}, {label:'More precise', dark:true}]}
-        meta="Full setup guide included — Microsoft 365 and Plaud."
+        meta="Full setup guide included -- Microsoft 365 and Plaud."
       />
     </div>
   </>
@@ -1439,18 +1439,18 @@ const PathBScreen = ({ onBack, onContinue }) => {
         <span style={{fontSize:15, lineHeight:1}}>←</span> Back
       </button>
 
-      {/* Section 1 — Instructions */}
+      {/* Section 1 -- Instructions */}
       <SectionHead
         title="Before you begin"
         subtitle="Two optional steps that make your profile significantly more accurate. Skip either one if it doesn't apply to you." />
 
-      {/* Step 1 — Microsoft 365 */}
+      {/* Step 1 -- Microsoft 365 */}
       <div style={{display:'flex', gap:14, marginBottom:28}}>
         <StepNum n={1} />
         <div style={{flex:1}}>
           <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
             <span style={{fontWeight:700, fontSize:16, color:'var(--ink)'}}>Connect Microsoft 365</span>
-            <StepBadge label="Optional — adds your emails and calendar" />
+            <StepBadge label="Optional -- adds your emails and calendar" />
           </div>
           <p style={{margin:'0 0 12px', fontSize:14.5, fontWeight:300, color:'var(--ink-soft)', lineHeight:1.6}}>
             A connector links Claude to your Microsoft account so it can read your sent emails and calendar automatically.
@@ -1460,27 +1460,27 @@ const PathBScreen = ({ onBack, onContinue }) => {
             'Click "Connectors"',
             'Find Microsoft 365 and click connect',
           ]} />
-          <ScreenshotGrid caption="Step 1 — Connect Microsoft 365" images={[IMG_CONNECTOR_MENU, IMG_CONNECTOR_DIRECTORY]} />
+          <ScreenshotGrid caption="Step 1 -- Connect Microsoft 365" images={[IMG_CONNECTOR_MENU, IMG_CONNECTOR_DIRECTORY]} />
         </div>
       </div>
 
       {divider}
 
-      {/* Step 2 — Plaud */}
+      {/* Step 2 -- Plaud */}
       <div style={{display:'flex', gap:14, marginBottom:28}}>
         <StepNum n={2} />
         <div style={{flex:1}}>
           <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
             <span style={{fontWeight:700, fontSize:16, color:'var(--ink)'}}>Export your Plaud transcripts</span>
-            <StepBadge label="Optional — adds your voice notes" />
+            <StepBadge label="Optional -- adds your voice notes" />
           </div>
           <InstructionList items={[
             'Go to web.plaud.ai and select all recordings you want to include',
             'Click Merge → then "Merge only" in the dialog',
             'Open the merged file → click "Copy & export" → Export transcript',
-            'Save the .txt file — you\'ll upload it below',
+            'Save the .txt file -- you\'ll upload it below',
           ]} />
-          <ScreenshotGrid caption="Step 2 — Export your Plaud transcripts" images={[
+          <ScreenshotGrid caption="Step 2 -- Export your Plaud transcripts" images={[
             IMG_PLAUD_FILES,
             IMG_PLAUD_SELECTED,
             IMG_PLAUD_MERGE_DIALOG,
@@ -1491,7 +1491,7 @@ const PathBScreen = ({ onBack, onContinue }) => {
 
       {divider}
 
-      {/* Step 3 — Run the prompt */}
+      {/* Step 3 -- Run the prompt */}
       <div style={{display:'flex', gap:14, marginBottom:32}}>
         <StepNum n={3} />
         <div style={{flex:1}}>
@@ -1502,13 +1502,13 @@ const PathBScreen = ({ onBack, onContinue }) => {
           <InstructionList items={[
             'Open Claude at claude.ai and start a new chat',
             'Copy the prompt below and paste it into the chat',
-            'Send — Claude will read your data and generate a .md file',
-            'Save that .md file — upload it in the next step',
+            'Send -- Claude will read your data and generate a .md file',
+            'Save that .md file -- upload it in the next step',
           ]} />
         </div>
       </div>
 
-      {/* Section 2 — Prompt block */}
+      {/* Section 2 -- Prompt block */}
       <div style={{
         border:'1px solid var(--rule)', borderRadius:10, overflow:'hidden',
         marginBottom:36
@@ -1541,7 +1541,7 @@ const PathBScreen = ({ onBack, onContinue }) => {
         }}>{PATHB_PROMPT}</pre>
       </div>
 
-      {/* Section 3 — File upload */}
+      {/* Section 3 -- File upload */}
       <div style={{marginBottom:36}}>
         <div style={{fontWeight:700, fontSize:16, color:'var(--ink)', marginBottom:4}}>Upload your files</div>
         <p style={{margin:'0 0 18px', fontSize:14.5, fontWeight:300, color:'var(--muted)'}}>
@@ -1744,16 +1744,16 @@ const PathBInterviewScreen = ({ mdFile, txtFile, onProfile, onBack }) => {
 
   const retry = () => { if (retryFn.current) retryFn.current(); };
 
-  // Building phase — full-card takeover
+  // Building phase -- full-card takeover
   if (phase === 'building') {
     return (
       <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:'80px 0 60px'}}>
         <Spinner />
         <div style={{marginTop:28, fontWeight:800, fontSize:26, letterSpacing:'-0.02em', color:'var(--ink)', lineHeight:1.1}}>
-          Building your profile…
+          Building your profile...
         </div>
         <div style={{marginTop:12, fontSize:14, color:'var(--muted)', fontWeight:300}}>
-          Synthesising your data and interview — this takes a few seconds.
+          Synthesising your data and interview -- this takes a few seconds.
         </div>
       </div>
     );
@@ -1784,7 +1784,7 @@ const PathBInterviewScreen = ({ mdFile, txtFile, onProfile, onBack }) => {
           </div>
           {slowLoad && (
             <div style={{marginTop:14, fontSize:13.5, color:'var(--muted)', fontWeight:300, textAlign:'center'}}>
-              This may take a moment — Claude is reading your emails and conversations.
+              This may take a moment -- Claude is reading your emails and conversations.
             </div>
           )}
         </div>
@@ -1866,7 +1866,7 @@ const PathBInterviewScreen = ({ mdFile, txtFile, onProfile, onBack }) => {
               value={answer}
               onChange={e => setAnswer(e.target.value)}
               onKeyDown={e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && answer.trim()) handleSubmit(false); }}
-              placeholder="Type your answer…"
+              placeholder="Type your answer..."
               rows={4}
               style={{
                 width:'100%', border:0, background:'transparent',
@@ -1944,7 +1944,7 @@ const PathBResultScreen = ({ profile, onRestart }) => {
     <div>
       <div style={{marginBottom:28}}>
         <div style={{fontSize:11, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--muted)', fontWeight:600, marginBottom:14}}>
-          Path B — Complete
+          Path B -- Complete
         </div>
         <h1 style={{margin:0, fontWeight:800, fontSize:36, lineHeight:1.1, letterSpacing:'-0.025em', color:'var(--ink)'}}>
           Your AI profile is ready.
@@ -2028,7 +2028,7 @@ const IntroScreen = () => (
       margin:'24px 0 0', fontWeight:300, fontSize:18, lineHeight:1.55,
       color:'var(--ink-soft)', maxWidth:560
     }}>
-      Twenty-one questions. Roughly fifteen minutes. You'll come out the other side\n      with a personalised system prompt — paste it into Claude and it will start\n      writing, reasoning and triaging like a partner who's already been at your side
+      Twenty-one questions. Roughly fifteen minutes. You'll come out the other side\n      with a personalised system prompt -- paste it into Claude and it will start\n      writing, reasoning and triaging like a partner who's already been at your side
       for two years.
     </p>
     <div style={{
@@ -2054,7 +2054,7 @@ const IntroScreen = () => (
       margin:'18px 0 0', fontSize:13, fontWeight:300,
       color:'var(--muted)', lineHeight:1.5
     }}>
-      You can move freely between sections and skip any question — there are no required fields.
+      You can move freely between sections and skip any question -- there are no required fields.
     </p>
   </>
 );
@@ -2063,7 +2063,7 @@ const IntroScreen = () => (
 const DECISION_STYLE = {
   options:  "When I ask for help with a decision, lay out the options with trade-offs and let me choose. Don't push a recommendation unless I ask for one.",
   direct:   "When I ask for help with a decision, give me a direct recommendation and explain your reasoning. Don't hedge.",
-  both:     "When I ask for help with a decision, lead with what you'd do and why — then briefly note the alternatives I'm passing up.",
+  both:     "When I ask for help with a decision, lead with what you'd do and why -- then briefly note the alternatives I'm passing up.",
   depends:  "When I ask for help with a decision, ask one clarifying question first to figure out what kind of help I actually need.",
 };
 
@@ -2103,7 +2103,7 @@ function buildSystemPrompt(a) {
   lines.push('# Voice and communication');
   lines.push('');
   if (a.q13) lines.push(`- A line they were proud of: ${a.q13.trim()}`);
-  if (a.q14) lines.push(`- What irritates them in others' writing: ${a.q14.trim()}`);\n  if (a.q15) {\n    lines.push('- Two notes about the same news (partner vs. team):');\n    lines.push(`  ${a.q15.trim().split('\n').join('\n  ')}`);\n  }\n  if (a.q16) lines.push(`- Giving feedback when something goes wrong: ${a.q16.trim()}`);\n  if (a.q17) lines.push(`- A communicator they admire: ${a.q17.trim()}`);\n  lines.push('');\n\n  lines.push('# How I should work with them');\n  lines.push('');\n  if (a.q18 && DECISION_STYLE[a.q18]) lines.push(`- ${DECISION_STYLE[a.q18]}`);\n  if (a.q19 && INFO_STYLE[a.q19])     lines.push(`- ${INFO_STYLE[a.q19]}`);\n  if (a.q20) lines.push(`- Never write on their behalf: ${a.q20.trim()}`);\n  lines.push("- Match their voice — concise, direct, no padding. Don't use words or phrases they've flagged as theirs-to-avoid.");\n  lines.push('- When drafting on their behalf, hand back something they could send unchanged, not a starting point.');\n  lines.push('- Default to British/international English spelling unless they\'ve written American.');
+  if (a.q14) lines.push(`- What irritates them in others' writing: ${a.q14.trim()}`);\n  if (a.q15) {\n    lines.push('- Two notes about the same news (partner vs. team):');\n    lines.push(`  ${a.q15.trim().split('\n').join('\n  ')}`);\n  }\n  if (a.q16) lines.push(`- Giving feedback when something goes wrong: ${a.q16.trim()}`);\n  if (a.q17) lines.push(`- A communicator they admire: ${a.q17.trim()}`);\n  lines.push('');\n\n  lines.push('# How I should work with them');\n  lines.push('');\n  if (a.q18 && DECISION_STYLE[a.q18]) lines.push(`- ${DECISION_STYLE[a.q18]}`);\n  if (a.q19 && INFO_STYLE[a.q19])     lines.push(`- ${INFO_STYLE[a.q19]}`);\n  if (a.q20) lines.push(`- Never write on their behalf: ${a.q20.trim()}`);\n  lines.push("- Match their voice -- concise, direct, no padding. Don't use words or phrases they've flagged as theirs-to-avoid.");\n  lines.push('- When drafting on their behalf, hand back something they could send unchanged, not a starting point.');\n  lines.push('- Default to British/international English spelling unless they\'ve written American.');
   lines.push('');
 
   if (a.q21 && a.q21.trim()) {
@@ -2116,7 +2116,7 @@ function buildSystemPrompt(a) {
   if (a.emails && a.emails.trim().length > 40) {
     lines.push('# Writing samples');
     lines.push('');
-    lines.push("Below are real emails they've sent. Treat these as the canonical reference for their voice — sentence length, structure, openers, sign-offs, hedges (or lack of), and the specific words they reach for. When drafting, prefer constructions you see here over generic phrasing.");
+    lines.push("Below are real emails they've sent. Treat these as the canonical reference for their voice -- sentence length, structure, openers, sign-offs, hedges (or lack of), and the specific words they reach for. When drafting, prefer constructions you see here over generic phrasing.");
     lines.push('');
     lines.push('```');
     lines.push(a.emails.trim());
@@ -2125,7 +2125,7 @@ function buildSystemPrompt(a) {
   }
 
   lines.push('---');
-  lines.push(`Profile built ${new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })} via Rumo Intelligence — CEO AI Profile.`);
+  lines.push(`Profile built ${new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })} via Rumo Intelligence -- CEO AI Profile.`);
 
   return lines.join('\n');
 }
@@ -2133,34 +2133,34 @@ function buildSystemPrompt(a) {
 // ─── Proxy config ─────────────────────────────────────────────────────────────
 const PROXY_URL = 'https://isefnwjtqnqjbltygeeg.supabase.co/functions/v1/anthropic-proxy';
 
-// GENERATION_SYSTEM — defined in plain <script> above
+// GENERATION_SYSTEM -- defined in plain <script> above
 
 function buildAnswerMessage(a) {
   const lines = ['Here are the CEO\'s onboarding answers:', ''];
   const add = (label, val) => { if (val && val.trim()) lines.push(`${label}: ${val.trim()}`); };
-  add('Q1 — Name and company', a.q1);
-  add('Q2 — What they actually do', a.q2);
-  add('Q3 — The company', a.q3);
-  add('Q4 — A recent decision', a.q4);
-  add('Q5 — Bad news response (first 10 min)', a.q5);
-  add('Q6 — A good result is when…', a.q6);
-  add('Q7 — Decision they\'re most proud of', a.q7);
-  add('Q8 — A mistake and what they took from it', a.q8);
-  add('Q9 — 90-day focus', a.q9);
-  add('Q10 — Biggest risk', a.q10);
-  add('Q11 — Time-sinks that shouldn\'t exist', a.q11);
-  add('Q12 — Energy givers and drains', a.q12);
-  add('Q13 — A line they were proud of', a.q13);
-  add('Q14 — What irritates them in others\' writing', a.q14);
-  add('Q15 — Two notes about the same news (partner vs. team)', a.q15);
-  add('Q16 — How they give feedback when something goes wrong', a.q16);
-  add('Q17 — A communicator they admire', a.q17);
+  add('Q1 -- Name and company', a.q1);
+  add('Q2 -- What they actually do', a.q2);
+  add('Q3 -- The company', a.q3);
+  add('Q4 -- A recent decision', a.q4);
+  add('Q5 -- Bad news response (first 10 min)', a.q5);
+  add('Q6 -- A good result is when...', a.q6);
+  add('Q7 -- Decision they\'re most proud of', a.q7);
+  add('Q8 -- A mistake and what they took from it', a.q8);
+  add('Q9 -- 90-day focus', a.q9);
+  add('Q10 -- Biggest risk', a.q10);
+  add('Q11 -- Time-sinks that shouldn\'t exist', a.q11);
+  add('Q12 -- Energy givers and drains', a.q12);
+  add('Q13 -- A line they were proud of', a.q13);
+  add('Q14 -- What irritates them in others\' writing', a.q14);
+  add('Q15 -- Two notes about the same news (partner vs. team)', a.q15);
+  add('Q16 -- How they give feedback when something goes wrong', a.q16);
+  add('Q17 -- A communicator they admire', a.q17);
   const decisionLabels = { options:'Show me the options', direct:'Give me a direct recommendation', both:'A recommendation, then alternatives', depends:'Ask me first' };
-  if (a.q18) add('Q18 — Decision help preference', decisionLabels[a.q18] || a.q18);
+  if (a.q18) add('Q18 -- Decision help preference', decisionLabels[a.q18] || a.q18);
   const infoLabels = { conclusion:'Conclusion first', context:'Full context first', tldr:'TL;DR + detail' };
-  if (a.q19) add('Q19 — Information preference', infoLabels[a.q19] || a.q19);
-  add('Q20 — What Claude should never write', a.q20);
-  add('Q21 — Additional context', a.q21);
+  if (a.q19) add('Q19 -- Information preference', infoLabels[a.q19] || a.q19);
+  add('Q20 -- What Claude should never write', a.q20);
+  add('Q21 -- Additional context', a.q21);
   if (a.emails && a.emails.trim().length > 40) {
     lines.push('');
     lines.push('Email samples:');
@@ -2251,7 +2251,7 @@ function App() {
       setTimeout(() => go('results'), 350);
     } catch (err) {
       animating = false;
-      setGenError('Something went wrong — please try again.');
+      setGenError('Something went wrong -- please try again.');
       setGenPhase('idle');
       setGenProgress(0);
     }
