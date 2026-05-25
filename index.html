@@ -373,7 +373,7 @@ var GENERATION_SYSTEM =
 <script type="text/babel">
 const { useState, useEffect, useRef, useMemo } = React;
 
-// ─── Icons ────────────────────────────────────────────────────────────────────
+// --- Icons --------------------------------------------------------------------
 const Lock = () => (
   <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2">
     <rect x="2.5" y="5.5" width="7" height="5" rx="1" />
@@ -395,7 +395,7 @@ const Spinner = () => (
   </svg>
 );
 
-// ─── Logo ─────────────────────────────────────────────────────────────────────
+// --- Logo ---------------------------------------------------------------------
 const RumoLogo = ({ size = 22 }) => (
   <div style={{display:'inline-flex', alignItems:'center', gap: size*0.38, lineHeight:1}}>
     <span style={{
@@ -416,7 +416,7 @@ const RumoLogo = ({ size = 22 }) => (
   </div>
 );
 
-// ─── Layout ───────────────────────────────────────────────────────────────────
+// --- Layout -------------------------------------------------------------------
 const Header = () => (
   <header style={{
     display:'flex', alignItems:'center', justifyContent:'space-between',
@@ -470,7 +470,7 @@ const Footer = () => (
     color:'var(--muted)', fontSize:12, letterSpacing:'0.06em', fontWeight:400
   }}>
     <span style={{display:'inline-flex', alignItems:'center', gap:8}}>
-      © 2026 Rumo Intelligence. All rights reserved.
+      &copy; 2026 Rumo Intelligence. All rights reserved.
     </span>
   </footer>
 );
@@ -506,7 +506,7 @@ const SectionHead = ({ kicker, title, subtitle }) => (
   </div>
 );
 
-// ─── Form controls ────────────────────────────────────────────────────────────
+// --- Form controls ------------------------------------------------------------
 const QLabel = ({ n, label, hint }) => (
   <div style={{marginBottom:14}}>
     <div style={{display:'flex', alignItems:'baseline', gap:14}}>
@@ -603,7 +603,7 @@ const NavButtons = ({ onBack, onNext, nextLabel = 'Continue', onSkip, skipLabel,
             fontWeight:500, fontSize:14, color:'var(--ink)',
             letterSpacing:'0.02em', display:'inline-flex', alignItems:'center', gap:8
           }}>
-          <span style={{fontSize:16, lineHeight:1}}>←</span> Back
+          <span style={{fontSize:16, lineHeight:1}}>&larr;</span> Back
         </button>
       ) : <span/>}
       {onSkip && (
@@ -624,12 +624,12 @@ const NavButtons = ({ onBack, onNext, nextLabel = 'Continue', onSkip, skipLabel,
         boxShadow: disabled ? 'none' : '0 1px 2px rgba(0,0,0,.1)',
         opacity: disabled ? .6 : 1
       }}>
-      {nextLabel} <span style={{fontSize:16, lineHeight:1}}>→</span>
+      {nextLabel} <span style={{fontSize:16, lineHeight:1}}>&rarr;</span>
     </button>
   </div>
 );
 
-// ─── Section screens ──────────────────────────────────────────────────────────
+// --- Section screens ----------------------------------------------------------
 const SectionOne = ({ a, set }) => (
   <>
     <SectionHead kicker="Section 1 -- Who you are"
@@ -843,7 +843,7 @@ const SectionSix = ({ a, set }) => (
   </>
 );
 
-// ─── Generate screen ──────────────────────────────────────────────────────────
+// --- Generate screen ----------------------------------------------------------
 const GenerateScreen = ({ phase, progress, error }) => {
   const lines = [
     'Reading your answers...',
@@ -895,7 +895,7 @@ const GenerateScreen = ({ phase, progress, error }) => {
               fontFamily:'JetBrains Mono, ui-monospace, monospace',
               fontSize:14, color:'var(--ink)', letterSpacing:'-0.01em'
             }}>
-              {lines[step]} <span className="caret">▍</span>
+              {lines[step]} <span className="caret">|</span>
             </div>
           </div>
           <div style={{
@@ -915,7 +915,7 @@ const GenerateScreen = ({ phase, progress, error }) => {
           }}>
             {lines.slice(0, step).map((l, i) => (
               <li key={i} style={{display:'flex', gap:10, color:'var(--ink-soft)'}}>
-                <span style={{color:'var(--ok)'}}>✓</span> {l}
+                <span style={{color:'var(--ok)'}}>&#10003;</span> {l}
               </li>
             ))}
           </ul>
@@ -925,7 +925,7 @@ const GenerateScreen = ({ phase, progress, error }) => {
   );
 };
 
-// ─── Results screen ───────────────────────────────────────────────────────────
+// --- Results screen -----------------------------------------------------------
 const ResultsScreen = ({ prompt, onRestart }) => {
   const [copied, setCopied] = useState(false);
   const taRef = useRef(null);
@@ -974,7 +974,7 @@ const ResultsScreen = ({ prompt, onRestart }) => {
           color:'rgba(244,239,234,.5)', letterSpacing:'0.04em'
         }}>
           <span>system-prompt.md</span>
-          <span style={{fontSize:11}}>{prompt.split('\n').length} lines · {prompt.length} chars</span>
+          <span style={{fontSize:11}}>{prompt.split('\n').length} lines \u00B7 {prompt.length} chars</span>
         </div>
         <pre ref={taRef} className="nice-scroll" style={{
           margin:0, padding:'22px 24px',
@@ -995,7 +995,7 @@ const ResultsScreen = ({ prompt, onRestart }) => {
             display:'inline-flex', alignItems:'center', gap:10,
             boxShadow:'0 1px 2px rgba(0,0,0,.3), 0 8px 24px -10px rgba(232,197,71,.5)'
           }}>
-          {copied ? '✓ Copied to clipboard' : 'Copy to clipboard'}
+          {copied ? '\u2713 Copied to clipboard' : 'Copy to clipboard'}
         </button>
         <button type="button"
           onClick={() => {
@@ -1021,8 +1021,8 @@ const ResultsScreen = ({ prompt, onRestart }) => {
       }}>
         {[
           ['01', 'Open Claude.ai', 'Sign in to your account.'],
-          ['02', 'Create a Project', 'New Project → name it however you like.'],
-          ['03', 'Paste as Instructions', 'Project settings → System prompt.'],
+          ['02', 'Create a Project', 'New Project -> name it however you like.'],
+          ['03', 'Paste as Instructions', 'Project settings -> System prompt.'],
         ].map(([n, h, b], i) => (
           <div key={n} style={{
             paddingLeft: i===0 ? 0 : 24,
@@ -1057,14 +1057,14 @@ const ResultsScreen = ({ prompt, onRestart }) => {
   );
 };
 
-// ─── Path B prompt constant ────────────────────────────────────────────────────
+// --- Path B prompt constant ----------------------------------------------------
 // PATHB_PROMPT -- defined in plain <script> above
 
 
-// ─── Path B interview system prompt ──────────────────────────────────────────
+// --- Path B interview system prompt ------------------------------------------
 // PATHB_INTERVIEW_SYSTEM -- defined in plain <script> above
 
-// ─── Path B helper components ──────────────────────────────────────────────────
+// --- Path B helper components --------------------------------------------------
 const StepNum = ({ n }) => (
   <div style={{
     width:24, height:24, borderRadius:'50%', flexShrink:0,
@@ -1084,7 +1084,7 @@ const StepBadge = ({ label, dark = false }) => (
   }}>{label}</span>
 );
 
-// ─── Screenshot lightbox ──────────────────────────────────────────────────────
+// --- Screenshot lightbox ------------------------------------------------------
 const Lightbox = ({ images, startIndex, caption, onClose }) => {
   const [idx, setIdx] = useState(startIndex);
   const [fading, setFading] = useState(false);
@@ -1157,7 +1157,7 @@ const Lightbox = ({ images, startIndex, caption, onClose }) => {
         animation: 'lb-in 0.15s ease both',
       }}>
 
-      {/* × close */}
+      {/* x close */}
       <button ref={closeRef} aria-label="Close lightbox" onClick={onClose}
         style={{
           position: 'absolute', top: 16, right: 16,
@@ -1167,13 +1167,13 @@ const Lightbox = ({ images, startIndex, caption, onClose }) => {
           color: '#fff', fontSize: 20, cursor: 'pointer', lineHeight: 1,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontFamily: 'inherit',
-        }}>×</button>
+        }}>&times;</button>
 
       {/* Prev + image + Next */}
       <div onClick={(e) => e.stopPropagation()}
         style={{ display: 'flex', alignItems: 'center', gap: 16, maxWidth: '95vw' }}>
         {images.length > 1
-          ? navBtn(prevRef, 'Previous image', '‹', -1)
+          ? navBtn(prevRef, 'Previous image', '&lsaquo;', -1)
           : <div style={{width:44}} />}
 
         <img src={images[idx]} alt={caption || ''}
@@ -1188,7 +1188,7 @@ const Lightbox = ({ images, startIndex, caption, onClose }) => {
           }} />
 
         {images.length > 1
-          ? navBtn(nextRef, 'Next image', '›', 1)
+          ? navBtn(nextRef, 'Next image', '&rsaquo;', 1)
           : <div style={{width:44}} />}
       </div>
 
@@ -1318,7 +1318,7 @@ const UploadZone = ({ label, sublabel, accept, file, onFile }) => {
   );
 };
 
-// ─── Path selection components ────────────────────────────────────────────────
+// --- Path selection components ------------------------------------------------
 const PathCard = ({ selected, onClick, title, body, badges, meta }) => {
   const [hovered, setHovered] = useState(false);
   const active = selected || hovered;
@@ -1436,7 +1436,7 @@ const PathBScreen = ({ onBack, onContinue }) => {
         fontSize:13.5, fontWeight:500, color:'var(--muted)', cursor:'pointer',
         letterSpacing:'0.01em'
       }}>
-        <span style={{fontSize:15, lineHeight:1}}>←</span> Back
+        <span style={{fontSize:15, lineHeight:1}}>&larr;</span> Back
       </button>
 
       {/* Section 1 -- Instructions */}
@@ -1476,8 +1476,8 @@ const PathBScreen = ({ onBack, onContinue }) => {
           </div>
           <InstructionList items={[
             'Go to web.plaud.ai and select all recordings you want to include',
-            'Click Merge → then "Merge only" in the dialog',
-            'Open the merged file → click "Copy & export" → Export transcript',
+            'Click Merge -> then "Merge only" in the dialog',
+            'Open the merged file -> click "Copy & export" -> Export transcript',
             'Save the .txt file -- you\'ll upload it below',
           ]} />
           <ScreenshotGrid caption="Step 2 -- Export your Plaud transcripts" images={[
@@ -1529,7 +1529,7 @@ const PathBScreen = ({ onBack, onContinue }) => {
             cursor:'pointer', display:'inline-flex', alignItems:'center', gap:6,
             transition:'background .2s'
           }}>
-            {promptCopied ? '✓ Copied' : 'Copy prompt'}
+            {promptCopied ? '\u2713 Copied' : 'Copy prompt'}
           </button>
         </div>
         <pre className="nice-scroll-light" style={{
@@ -1577,14 +1577,14 @@ const PathBScreen = ({ onBack, onContinue }) => {
             opacity: mdFile ? 1 : .6,
             boxShadow: mdFile ? '0 1px 2px rgba(0,0,0,.1)' : 'none',
           }}>
-          Continue <span style={{fontSize:16, lineHeight:1}}>→</span>
+          Continue <span style={{fontSize:16, lineHeight:1}}>&rarr;</span>
         </button>
       </div>
     </div>
   );
 };
 
-// ─── Path B interview + result screens ───────────────────────────────────────
+// --- Path B interview + result screens ---------------------------------------
 const LoadingDots = () => {
   const [n, setN] = useState(0);
   useEffect(() => {
@@ -1766,7 +1766,7 @@ const PathBInterviewScreen = ({ mdFile, txtFile, onProfile, onBack }) => {
       fontSize:13.5, fontWeight:500, color:'var(--muted)', cursor:'pointer',
       letterSpacing:'0.01em'
     }}>
-      <span style={{fontSize:15, lineHeight:1}}>←</span> Back
+      <span style={{fontSize:15, lineHeight:1}}>&larr;</span> Back
     </button>
   );
 
@@ -1887,7 +1887,7 @@ const PathBInterviewScreen = ({ mdFile, txtFile, onProfile, onBack }) => {
                 display:'inline-flex', alignItems:'center', gap:10,
                 boxShadow: answer.trim() ? '0 1px 2px rgba(0,0,0,.1)' : 'none',
               }}>
-              {qNum >= 5 ? 'Finish' : 'Next'} <span style={{fontSize:16, lineHeight:1}}>→</span>
+              {qNum >= 5 ? 'Finish' : 'Next'} <span style={{fontSize:16, lineHeight:1}}>&rarr;</span>
             </button>
             <button type="button" onClick={() => handleSubmit(true)}
               style={{
@@ -1895,7 +1895,7 @@ const PathBInterviewScreen = ({ mdFile, txtFile, onProfile, onBack }) => {
                 fontSize:13.5, fontWeight:400, color:'var(--muted-soft)',
                 cursor:'pointer', textDecoration:'underline', textUnderlineOffset:3,
               }}>
-              Skip this question →
+              Skip this question &rarr;
             </button>
           </div>
         </>
@@ -1962,7 +1962,7 @@ const PathBResultScreen = ({ profile, onRestart }) => {
           fontSize:12, color:'var(--muted)', letterSpacing:'0.04em',
         }}>
           <span>my-ai-profile.md</span>
-          <span style={{fontSize:11}}>{profile.split('\n').length} lines · {profile.length} chars</span>
+          <span style={{fontSize:11}}>{profile.split('\n').length} lines \u00B7 {profile.length} chars</span>
         </div>
         <pre className="nice-scroll" style={{
           margin:0, padding:'20px 22px', maxHeight:420, overflow:'auto',
@@ -1980,7 +1980,7 @@ const PathBResultScreen = ({ profile, onRestart }) => {
           cursor:'pointer', display:'inline-flex', alignItems:'center', gap:8,
           boxShadow:'0 1px 2px rgba(0,0,0,.1)',
         }}>
-          {copied ? '✓ Copied' : 'Copy profile'}
+          {copied ? '\u2713 Copied' : 'Copy profile'}
         </button>
         <button type="button" onClick={download} style={{
           background:'transparent', color:'var(--ink)',
@@ -2004,7 +2004,7 @@ const PathBResultScreen = ({ profile, onRestart }) => {
   );
 };
 
-// ─── Intro screen ─────────────────────────────────────────────────────────────
+// --- Intro screen -------------------------------------------------------------
 const IntroScreen = () => (
   <>
     <div style={{
@@ -2059,7 +2059,7 @@ const IntroScreen = () => (
   </>
 );
 
-// ─── Prompt builder ───────────────────────────────────────────────────────────
+// --- Prompt builder -----------------------------------------------------------
 const DECISION_STYLE = {
   options:  "When I ask for help with a decision, lay out the options with trade-offs and let me choose. Don't push a recommendation unless I ask for one.",
   direct:   "When I ask for help with a decision, give me a direct recommendation and explain your reasoning. Don't hedge.",
@@ -2146,7 +2146,7 @@ function buildSystemPrompt(a) {
   return lines.join('\n');
 }
 
-// ─── Proxy config ─────────────────────────────────────────────────────────────
+// --- Proxy config -------------------------------------------------------------
 const PROXY_URL = 'https://isefnwjtqnqjbltygeeg.supabase.co/functions/v1/anthropic-proxy';
 
 // GENERATION_SYSTEM -- defined in plain <script> above
@@ -2187,7 +2187,7 @@ function buildAnswerMessage(a) {
   return lines.join('\n');
 }
 
-// ─── App ──────────────────────────────────────────────────────────────────────
+// --- App ----------------------------------------------------------------------
 const SCREENS = [
   { id:'pathselect',label:'Path',     step:0, name:'Choose your path',       optional:false },
   { id:'intro',     label:'Welcome',  step:0, name:'Introduction',           optional:false },
@@ -2319,7 +2319,7 @@ function App() {
               opacity: selectedPath ? 1 : .6,
               boxShadow: selectedPath ? '0 1px 2px rgba(0,0,0,.1)' : 'none',
             }}>
-            Continue <span style={{fontSize:16, lineHeight:1}}>→</span>
+            Continue <span style={{fontSize:16, lineHeight:1}}>&rarr;</span>
           </button>
         </div>
       );
@@ -2341,7 +2341,7 @@ function App() {
               fontWeight:500, fontSize:14, color:'var(--ink)',
               display:'inline-flex', alignItems:'center', gap:8
             }}>
-            <span style={{fontSize:16, lineHeight:1}}>←</span> Back
+            <span style={{fontSize:16, lineHeight:1}}>&larr;</span> Back
           </button>
           <button type="button" onClick={runGenerate}
             style={{
