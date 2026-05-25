@@ -51,7 +51,9 @@
     border-color:var(--ink)}
   textarea:focus, input:focus{outline:none}
   @keyframes lb-in{from{opacity:0}to{opacity:1}}
-  @media(hover:none){.ss-magnifier{opacity:1!important}}
+  @keyframes ss-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  .ss-magnifier{animation:ss-pulse 1.5s ease-in-out infinite}
+  .ss-magnifier-paused{animation-play-state:paused}
 </style>
 </head>
 <body>
@@ -975,27 +977,25 @@ const Lightbox = ({ images, startIndex, caption, onClose }) => {
   );
 };
 
-const ScreenshotThumb = ({ src, onClick }) => {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <div style={{ position: 'relative', cursor: 'pointer' }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={onClick}>
-      <img src={src} alt=""
-        style={{ width: '100%', borderRadius: 8, border: '1px solid #e0dbd5', display: 'block' }} />
-      <div className="ss-magnifier" style={{
-        position: 'absolute', bottom: 6, right: 6,
-        width: 26, height: 26, borderRadius: '50%',
-        background: 'rgba(0,0,0,0.52)', color: '#fff',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 13, pointerEvents: 'none',
-        opacity: hovered ? 1 : 0,
-        transition: 'opacity 0.15s',
-      }}>🔍</div>
+const ScreenshotThumb = ({ src, onClick, lightboxOpen }) => (
+  <div style={{ position: 'relative', cursor: 'pointer' }} onClick={onClick}>
+    <img src={src} alt=""
+      style={{ width: '100%', borderRadius: 8, border: '1px solid #e0dbd5', display: 'block' }} />
+    <div className={'ss-magnifier' + (lightboxOpen ? ' ss-magnifier-paused' : '')} style={{
+      position: 'absolute', bottom: 6, right: 6,
+      width: 28, height: 28, borderRadius: '50%',
+      background: 'rgba(0,0,0,0.52)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      pointerEvents: 'none',
+    }}>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+        stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="5.5" cy="5.5" r="4" />
+        <line x1="8.8" y1="8.8" x2="13" y2="13" />
+      </svg>
     </div>
-  );
-};
+  </div>
+);
 
 const ScreenshotGrid = ({ images, caption }) => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -1007,7 +1007,7 @@ const ScreenshotGrid = ({ images, caption }) => {
         gap: 10, marginTop: 16,
       }}>
         {images.map((src, i) => (
-          <ScreenshotThumb key={i} src={src} onClick={() => setOpenIndex(i)} />
+          <ScreenshotThumb key={i} src={src} onClick={() => setOpenIndex(i)} lightboxOpen={openIndex !== null} />
         ))}
       </div>
       {openIndex !== null && (
