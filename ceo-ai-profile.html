@@ -827,6 +827,56 @@ Output a complete .md file with these sections:
 ## TOOLS & SYSTEMS
 ## RULES FOR CLAUDE`;
 
+
+// ─── Path B interview system prompt ──────────────────────────────────────────
+const PATHB_INTERVIEW_SYSTEM = `You are a personal AI profiling agent. You have been given context files about a CEO — their Claude conversation history, Outlook emails, calendar patterns, and optionally Plaud voice transcripts.
+
+Read all provided files completely before asking any questions.
+
+Your job is to identify gaps — things that would help Claude serve this person better but cannot be reliably inferred from the data. Ask only about genuine gaps. If the data already answers something clearly, do not ask about it.
+
+Ask exactly 5 questions, one at a time. Wait for the answer before asking the next question.
+
+Focus your questions on these areas (only if not already clear from the data):
+1. Default communication tone when relationship context is unclear
+2. What Claude should always prioritise when helping them
+3. Anything Claude should never say or do
+4. Important context about them that doesn't appear in emails or conversations
+5. The main thing they want Claude to help with day-to-day
+
+If the user skips a question, move to the next one without commenting on the skip.
+
+After the 5th answer (or skip), generate a complete personal profile in this exact format:
+
+# MY AI PROFILE
+> Generated: [date]
+
+## WHO I AM
+[2-3 sentences from the data]
+
+## HOW I WORK
+[Key patterns from data]
+
+## COMMUNICATION STYLE
+[Tone, directness, what changes by audience]
+
+## MY WRITING STYLE
+[Only if emails were provided. Specific patterns.]
+
+## WHAT I CARE ABOUT
+[Priorities and values from data + answers]
+
+## HOW TO WORK WITH ME
+[Practical instructions for Claude]
+
+## NEVER DO THIS
+[Hard limits from answers]
+
+## RULES FOR CLAUDE
+[5-7 specific actionable rules]
+
+Write in second person ("You are...") so the CEO can paste this directly into Claude as a system prompt.`;
+
 // ─── Path B helper components ──────────────────────────────────────────────────
 const StepNum = ({ n }) => (
   <div style={{
@@ -1330,7 +1380,7 @@ const PathBScreen = ({ onBack, onContinue }) => {
 
       {/* Continue button */}
       <div style={{paddingTop:28, borderTop:'1px solid var(--rule)'}}>
-        <button type="button" disabled={!mdFile} onClick={onContinue}
+        <button type="button" disabled={!mdFile} onClick={() => onContinue(mdFile, txtFile)}
           style={{
             background: mdFile ? 'var(--ink)' : '#dcdcdc',
             color:'#fff', border:'none', padding:'14px 26px', borderRadius:8,
@@ -1341,6 +1391,433 @@ const PathBScreen = ({ onBack, onContinue }) => {
             boxShadow: mdFile ? '0 1px 2px rgba(0,0,0,.1)' : 'none',
           }}>
           Continue <span style={{fontSize:16, lineHeight:1}}>→</span>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ─── Path B interview + result screens ───────────────────────────────────────
+const LoadingDots = () => {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setN(c => (c + 1) % 4), 480);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <span>
+      {'.'.repeat(n)}<span style={{opacity:0}}>{'.'.repeat(3 - n)}</span>
+    </span>
+  );
+};
+
+const ChatBubble = ({ msg }) => (
+  <div style={{display:'flex', justifyContent: msg.type === 'q' ? 'flex-start' : 'flex-end'}}>
+    <div style={{
+      maxWidth:'82%', padding:'12px 16px',
+      borderRadius: msg.type === 'q' ? '4px 14px 14px 14px' : '14px 4px 14px 14px',
+      background: msg.type === 'q' ? '#f2ede8' : 'var(--ink)',
+      color: msg.type === 'q' ? 'var(--ink)' : '#fff',
+      fontSize:14.5, fontWeight:300, lineHeight:1.55,
+      opacity: msg.skipped ? 0.5 : 1,
+      fontStyle: msg.skipped ? 'italic' : 'normal',
+    }}>
+      {msg.text}
+    </div>
+  </div>
+);
+
+const PathBInterviewScreen = ({ mdFile, txtFile, onProfile, onBack }) => {
+  const [phase, setPhase] = useState('loading');
+  const [apiMessages, setApiMessages] = useState([]);
+  const [chat, setChat] = useState([]);
+  const [currentQ, setCurrentQ] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [qNum, setQNum] = useState(0);
+  const [error, setError] = useState('');
+  const [slowLoad, setSlowLoad] = useState(false);
+  const retryFn = useRef(null);
+  const chatEndRef = useRef(null);
+
+  // Browser close warning
+  useEffect(() => {
+    const handler = (e) => { e.preventDefault(); e.returnValue = ''; return ''; };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, []);
+
+  // Slow-load subtext after 5 s
+  useEffect(() => {
+    if (phase !== 'loading') { setSlowLoad(false); return; }
+    const t = setTimeout(() => setSlowLoad(true), 5000);
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  // Auto-scroll to bottom of chat
+  useEffect(() => {
+    if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [chat, currentQ, phase]);
+
+  const callAPI = (msgs) =>
+    fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        system: PATHB_INTERVIEW_SYSTEM,
+        messages: msgs,
+        max_tokens: 2000,
+      }),
+    })
+    .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+    .then(data => {
+      const text = data.content && data.content[0] && data.content[0].text;
+      if (!text) throw new Error('Empty response');
+      return text;
+    });
+
+  const doInit = () => {
+    setPhase('loading');
+    setError('');
+    retryFn.current = doInit;
+    const limit = 100 * 1024;
+    Promise.all([
+      mdFile.text(),
+      txtFile ? txtFile.text() : Promise.resolve(null),
+    ]).then(([mdText, rawTxt]) => {
+      const mdTrunc = mdText.length > limit;
+      let content = 'CONTEXT FILE:
+' + (mdTrunc ? mdText.slice(0, limit) : mdText);
+      if (mdTrunc) content += '
+[Note: file was truncated to 100KB]';
+      if (rawTxt !== null) {
+        const txtTrunc = rawTxt.length > limit;
+        content += '
+
+PLAUD TRANSCRIPTS:
+' + (txtTrunc ? rawTxt.slice(0, limit) : rawTxt);
+        if (txtTrunc) content += '
+[Note: file was truncated to 100KB]';
+      }
+      const msgs = [{ role: 'user', content }];
+      return callAPI(msgs).then(response => {
+        const full = [...msgs, { role: 'assistant', content: response }];
+        setApiMessages(full);
+        setCurrentQ(response);
+        setQNum(1);
+        setPhase('ready');
+      });
+    }).catch(() => {
+      setError('Something went wrong. Please try again.');
+      setPhase('error');
+    });
+  };
+
+  useEffect(() => { doInit(); }, []);
+
+  const handleSubmit = (skip) => {
+    const userText    = skip ? '[skipped]' : answer.trim();
+    const displayText = skip ? '(skipped)' : answer.trim();
+    const newChat = [...chat, { type:'q', text:currentQ }, { type:'a', text:displayText, skipped:skip }];
+    setChat(newChat);
+    setAnswer('');
+    setCurrentQ('');
+    const userMsg = { role: 'user', content: userText };
+    const newApiMsgs = [...apiMessages, userMsg];
+    setApiMessages(newApiMsgs);
+
+    if (qNum >= 5) {
+      const buildStart = Date.now();
+      setPhase('building');
+      const doGenerate = () => {
+        retryFn.current = doGenerate;
+        callAPI(newApiMsgs).then(profile => {
+          const wait = Math.max(0, 2000 - (Date.now() - buildStart));
+          setTimeout(() => onProfile(profile), wait);
+        }).catch(() => {
+          setError('Something went wrong. Please try again.');
+          setPhase('error');
+        });
+      };
+      doGenerate();
+      return;
+    }
+
+    setPhase('thinking');
+    const doNext = () => {
+      retryFn.current = doNext;
+      setError('');
+      callAPI(newApiMsgs).then(response => {
+        const full = [...newApiMsgs, { role: 'assistant', content: response }];
+        setApiMessages(full);
+        setCurrentQ(response);
+        setQNum(n => n + 1);
+        setPhase('ready');
+      }).catch(() => {
+        setError('Something went wrong. Please try again.');
+        setPhase('error');
+      });
+    };
+    doNext();
+  };
+
+  const retry = () => { if (retryFn.current) retryFn.current(); };
+
+  // Building phase — full-card takeover
+  if (phase === 'building') {
+    return (
+      <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:'80px 0 60px'}}>
+        <Spinner />
+        <div style={{marginTop:28, fontWeight:800, fontSize:26, letterSpacing:'-0.02em', color:'var(--ink)', lineHeight:1.1}}>
+          Building your profile…
+        </div>
+        <div style={{marginTop:12, fontSize:14, color:'var(--muted)', fontWeight:300}}>
+          Synthesising your data and interview — this takes a few seconds.
+        </div>
+      </div>
+    );
+  }
+
+  const backBtn = (
+    <button type="button" onClick={onBack} style={{
+      background:'transparent', border:'none', padding:0, marginBottom:28,
+      display:'inline-flex', alignItems:'center', gap:8,
+      fontSize:13.5, fontWeight:500, color:'var(--muted)', cursor:'pointer',
+      letterSpacing:'0.01em'
+    }}>
+      <span style={{fontSize:15, lineHeight:1}}>←</span> Back
+    </button>
+  );
+
+  // Loading phase
+  if (phase === 'loading') {
+    return (
+      <div>
+        {backBtn}
+        <div style={{padding:'50px 0 40px', display:'flex', flexDirection:'column', alignItems:'center'}}>
+          <div style={{display:'inline-flex', alignItems:'center', gap:14}}>
+            <Spinner />
+            <span style={{fontSize:16, fontWeight:500, color:'var(--ink)'}}>
+              Reading your data<LoadingDots />
+            </span>
+          </div>
+          {slowLoad && (
+            <div style={{marginTop:14, fontSize:13.5, color:'var(--muted)', fontWeight:300, textAlign:'center'}}>
+              This may take a moment — Claude is reading your emails and conversations.
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Error with no question shown yet (initial load failure or post-submit failure)
+  const errorBox = error && (
+    <div style={{marginBottom:16}}>
+      <div style={{padding:'12px 16px', borderRadius:8, background:'#fef2f2', border:'1px solid #fca5a5', fontSize:14, color:'#991b1b', marginBottom:12}}>
+        {error}
+      </div>
+      <button type="button" onClick={retry} style={{
+        background:'var(--ink)', color:'#fff', border:'none',
+        padding:'11px 20px', borderRadius:8, fontWeight:600, fontSize:13.5, cursor:'pointer',
+      }}>
+        Retry
+      </button>
+    </div>
+  );
+
+  return (
+    <div>
+      {backBtn}
+
+      {/* Eyebrow + progress */}
+      <div style={{marginBottom:24}}>
+        <div style={{fontSize:11, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--muted)', fontWeight:600, marginBottom:10}}>
+          Connect your data
+        </div>
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:8}}>
+          <span style={{fontSize:13, fontWeight:500, color:'var(--muted)'}}>Question {qNum} of 5</span>
+        </div>
+        <div style={{height:2, background:'var(--rule)', borderRadius:2, overflow:'hidden'}}>
+          <div style={{
+            width: ((qNum - 1) * 20) + '%',
+            height:'100%', background:'var(--ink)',
+            transition:'width .6s cubic-bezier(.2,.7,.2,1)'
+          }} />
+        </div>
+      </div>
+
+      {/* Chat history */}
+      {chat.length > 0 && (
+        <div style={{display:'flex', flexDirection:'column', gap:10, marginBottom:20}}>
+          {chat.map((msg, i) => <ChatBubble key={i} msg={msg} />)}
+        </div>
+      )}
+
+      {/* Thinking indicator */}
+      {phase === 'thinking' && (
+        <div style={{
+          display:'inline-flex', alignItems:'center', gap:10,
+          padding:'12px 18px', background:'#f2ede8',
+          borderRadius:'4px 14px 14px 14px', marginBottom:20,
+        }}>
+          <Spinner />
+          <span style={{fontSize:14, color:'var(--muted)', fontWeight:400}}>
+            Thinking<LoadingDots />
+          </span>
+        </div>
+      )}
+
+      {/* Current question + input */}
+      {phase === 'ready' && (
+        <>
+          <div style={{
+            padding:'16px 20px', background:'#f2ede8',
+            borderRadius:'4px 14px 14px 14px',
+            fontSize:15, fontWeight:400, lineHeight:1.6,
+            color:'var(--ink)', marginBottom:20,
+          }}>
+            {currentQ}
+          </div>
+
+          <div className="field" style={{border:'1px solid var(--rule)', borderRadius:10, background:'#FCFAF8', marginBottom:16}}>
+            <textarea
+              value={answer}
+              onChange={e => setAnswer(e.target.value)}
+              onKeyDown={e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && answer.trim()) handleSubmit(false); }}
+              placeholder="Type your answer…"
+              rows={4}
+              style={{
+                width:'100%', border:0, background:'transparent',
+                padding:'14px 16px', fontSize:15, fontWeight:400,
+                lineHeight:1.55, color:'var(--ink)', resize:'vertical', minHeight:100,
+              }}
+            />
+          </div>
+
+          <div style={{display:'flex', alignItems:'center', gap:20}}>
+            <button type="button" disabled={!answer.trim()} onClick={() => handleSubmit(false)}
+              style={{
+                background: answer.trim() ? 'var(--ink)' : '#dcdcdc',
+                color:'#fff', border:'none', padding:'14px 26px', borderRadius:8,
+                fontWeight:600, fontSize:14, letterSpacing:'0.02em',
+                cursor: answer.trim() ? 'pointer' : 'not-allowed',
+                opacity: answer.trim() ? 1 : 0.6,
+                display:'inline-flex', alignItems:'center', gap:10,
+                boxShadow: answer.trim() ? '0 1px 2px rgba(0,0,0,.1)' : 'none',
+              }}>
+              {qNum >= 5 ? 'Finish' : 'Next'} <span style={{fontSize:16, lineHeight:1}}>→</span>
+            </button>
+            <button type="button" onClick={() => handleSubmit(true)}
+              style={{
+                background:'transparent', border:'none', padding:'10px 0',
+                fontSize:13.5, fontWeight:400, color:'var(--muted-soft)',
+                cursor:'pointer', textDecoration:'underline', textUnderlineOffset:3,
+              }}>
+              Skip this question →
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Error state */}
+      {phase === 'error' && (
+        <>
+          {currentQ && (
+            <div style={{
+              padding:'16px 20px', background:'#f2ede8',
+              borderRadius:'4px 14px 14px 14px',
+              fontSize:15, fontWeight:400, lineHeight:1.6,
+              color:'var(--ink)', marginBottom:20,
+            }}>
+              {currentQ}
+            </div>
+          )}
+          {errorBox}
+        </>
+      )}
+
+      <div ref={chatEndRef} />
+    </div>
+  );
+};
+
+const PathBResultScreen = ({ profile, onRestart }) => {
+  const [copied, setCopied] = useState(false);
+
+  const copy = () => {
+    navigator.clipboard.writeText(profile).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const download = () => {
+    const blob = new Blob([profile], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'my-ai-profile.md'; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div>
+      <div style={{marginBottom:28}}>
+        <div style={{fontSize:11, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--muted)', fontWeight:600, marginBottom:14}}>
+          Path B — Complete
+        </div>
+        <h1 style={{margin:0, fontWeight:800, fontSize:36, lineHeight:1.1, letterSpacing:'-0.025em', color:'var(--ink)'}}>
+          Your AI profile is ready.
+        </h1>
+        <p style={{margin:'12px 0 0', fontSize:16, fontWeight:300, color:'var(--muted)', lineHeight:1.5}}>
+          Paste this into your Claude Project Instructions to activate your AI profile.
+        </p>
+      </div>
+
+      <div style={{borderRadius:12, border:'1px solid var(--rule)', overflow:'hidden', marginBottom:24}}>
+        <div style={{
+          display:'flex', alignItems:'center', justifyContent:'space-between',
+          padding:'11px 16px', borderBottom:'1px solid var(--rule)', background:'#f7f4f0',
+          fontFamily:'JetBrains Mono, ui-monospace, monospace',
+          fontSize:12, color:'var(--muted)', letterSpacing:'0.04em',
+        }}>
+          <span>my-ai-profile.md</span>
+          <span style={{fontSize:11}}>{profile.split('
+').length} lines · {profile.length} chars</span>
+        </div>
+        <pre className="nice-scroll" style={{
+          margin:0, padding:'20px 22px', maxHeight:420, overflow:'auto',
+          fontFamily:'JetBrains Mono, ui-monospace, monospace',
+          fontSize:12.5, lineHeight:1.65, color:'var(--ink-soft)',
+          whiteSpace:'pre-wrap', wordBreak:'break-word',
+          background:'#fcfaf8',
+        }}>{profile}</pre>
+      </div>
+
+      <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:32}}>
+        <button type="button" onClick={copy} style={{
+          background:'var(--ink)', color:'#fff', border:'none',
+          padding:'13px 22px', borderRadius:8, fontWeight:600, fontSize:14,
+          cursor:'pointer', display:'inline-flex', alignItems:'center', gap:8,
+          boxShadow:'0 1px 2px rgba(0,0,0,.1)',
+        }}>
+          {copied ? '✓ Copied' : 'Copy profile'}
+        </button>
+        <button type="button" onClick={download} style={{
+          background:'transparent', color:'var(--ink)',
+          border:'1px solid var(--rule)', padding:'12px 18px', borderRadius:8,
+          fontWeight:500, fontSize:14, cursor:'pointer',
+        }}>
+          Download .md
+        </button>
+      </div>
+
+      <div style={{paddingTop:20, borderTop:'1px solid var(--rule)'}}>
+        <button type="button" onClick={onRestart} style={{
+          background:'transparent', border:'none', padding:0,
+          fontSize:13, color:'var(--muted-soft)', textDecoration:'underline',
+          textUnderlineOffset:3, cursor:'pointer',
+        }}>
+          Start over
         </button>
       </div>
     </div>
@@ -1600,6 +2077,8 @@ function App() {
   const [genProgress, setGenProgress] = useState(0);
   const [generatedPrompt, setGeneratedPrompt] = useState(null);
   const [genError, setGenError] = useState(null);
+  const [pathBFiles, setPathBFiles] = useState({ md: null, txt: null });
+  const [pathBProfile, setPathBProfile] = useState('');
 
   const set = (k, v) => setAnswers(a => ({ ...a, [k]: v }));
 
@@ -1654,19 +2133,14 @@ function App() {
   const current = SCREENS.find(s => s.id === screen) || SCREENS[0];
   const showProgress = current.step >= 1 && screen !== 'generate' && screen !== 'results';
   const dark = screen === 'results';
-  const maxW = (screen === 'pathselect' || screen === 'intro' || screen === 'results' || screen === 'pathb' || screen === 'pathbresult') ? 820 : 760;
+  const maxW = (screen === 'pathselect' || screen === 'intro' || screen === 'results' || screen === 'pathb' || screen === 'pathbresult' || screen === 'pathbinterview') ? 820 : 760;
 
   const renderBody = () => {
     switch (screen) {
       case 'pathselect': return <PathSelectScreen selected={selectedPath} onSelect={setSelectedPath} />;
-      case 'pathb':      return <PathBScreen onBack={() => go('pathselect')} onContinue={() => go('pathbresult')} />;
-      case 'pathbresult': return (
-        <div style={{padding:'40px 0 20px'}}>
-          <SectionHead kicker="Path B — Complete"
-            title="Your profile is ready."
-            subtitle="This step is still being built. Check back soon." />
-        </div>
-      );
+      case 'pathb':      return <PathBScreen onBack={() => go('pathselect')} onContinue={(md, txt) => { setPathBFiles({ md, txt }); go('pathbinterview'); }} />;
+      case 'pathbinterview': return <PathBInterviewScreen mdFile={pathBFiles.md} txtFile={pathBFiles.txt} onProfile={(p) => { setPathBProfile(p); go('pathbresult'); }} onBack={() => go('pathb')} />;
+      case 'pathbresult': return <PathBResultScreen profile={pathBProfile} onRestart={() => { setPathBFiles({ md: null, txt: null }); setPathBProfile(''); setSelectedPath(null); go('pathselect'); }} />;
       case 'intro':      return <IntroScreen />;
       case 'section1': return <SectionOne a={answers} set={set} />;
       case 'section2': return <SectionTwo a={answers} set={set} />;
@@ -1705,7 +2179,7 @@ function App() {
         </div>
       );
     }
-    if (screen === 'pathb' || screen === 'pathbresult') return null;
+    if (screen === 'pathb' || screen === 'pathbresult' || screen === 'pathbinterview') return null;
     if (screen === 'intro') {
       return <NavButtons onNext={() => go('section1')} nextLabel="Begin the form" />;
     }
