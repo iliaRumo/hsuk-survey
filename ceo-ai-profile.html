@@ -1673,18 +1673,12 @@ const PathBInterviewScreen = ({ mdFile, txtFile, onProfile, onBack }) => {
       txtFile ? txtFile.text() : Promise.resolve(null),
     ]).then(([mdText, rawTxt]) => {
       const mdTrunc = mdText.length > limit;
-      let content = 'CONTEXT FILE:
-' + (mdTrunc ? mdText.slice(0, limit) : mdText);
-      if (mdTrunc) content += '
-[Note: file was truncated to 100KB]';
+      let content = 'CONTEXT FILE:\n' + (mdTrunc ? mdText.slice(0, limit) : mdText);
+      if (mdTrunc) content += '\n[Note: file was truncated to 100KB]';
       if (rawTxt !== null) {
         const txtTrunc = rawTxt.length > limit;
-        content += '
-
-PLAUD TRANSCRIPTS:
-' + (txtTrunc ? rawTxt.slice(0, limit) : rawTxt);
-        if (txtTrunc) content += '
-[Note: file was truncated to 100KB]';
+        content += '\n\nPLAUD TRANSCRIPTS:\n' + (txtTrunc ? rawTxt.slice(0, limit) : rawTxt);
+        if (txtTrunc) content += '\n[Note: file was truncated to 100KB]';
       }
       const msgs = [{ role: 'user', content }];
       return callAPI(msgs).then(response => {
@@ -1968,8 +1962,7 @@ const PathBResultScreen = ({ profile, onRestart }) => {
           fontSize:12, color:'var(--muted)', letterSpacing:'0.04em',
         }}>
           <span>my-ai-profile.md</span>
-          <span style={{fontSize:11}}>{profile.split('
-').length} lines · {profile.length} chars</span>
+          <span style={{fontSize:11}}>{profile.split('\n').length} lines · {profile.length} chars</span>
         </div>
         <pre className="nice-scroll" style={{
           margin:0, padding:'20px 22px', maxHeight:420, overflow:'auto',
@@ -2035,9 +2028,7 @@ const IntroScreen = () => (
       margin:'24px 0 0', fontWeight:300, fontSize:18, lineHeight:1.55,
       color:'var(--ink-soft)', maxWidth:560
     }}>
-      Twenty-one questions. Roughly fifteen minutes. You'll come out the other side
-      with a personalised system prompt — paste it into Claude and it will start
-      writing, reasoning and triaging like a partner who's already been at your side
+      Twenty-one questions. Roughly fifteen minutes. You'll come out the other side\n      with a personalised system prompt — paste it into Claude and it will start\n      writing, reasoning and triaging like a partner who's already been at your side
       for two years.
     </p>
     <div style={{
@@ -2112,23 +2103,7 @@ function buildSystemPrompt(a) {
   lines.push('# Voice and communication');
   lines.push('');
   if (a.q13) lines.push(`- A line they were proud of: ${a.q13.trim()}`);
-  if (a.q14) lines.push(`- What irritates them in others' writing: ${a.q14.trim()}`);
-  if (a.q15) {
-    lines.push('- Two notes about the same news (partner vs. team):');
-    lines.push(`  ${a.q15.trim().split('\n').join('\n  ')}`);
-  }
-  if (a.q16) lines.push(`- Giving feedback when something goes wrong: ${a.q16.trim()}`);
-  if (a.q17) lines.push(`- A communicator they admire: ${a.q17.trim()}`);
-  lines.push('');
-
-  lines.push('# How I should work with them');
-  lines.push('');
-  if (a.q18 && DECISION_STYLE[a.q18]) lines.push(`- ${DECISION_STYLE[a.q18]}`);
-  if (a.q19 && INFO_STYLE[a.q19])     lines.push(`- ${INFO_STYLE[a.q19]}`);
-  if (a.q20) lines.push(`- Never write on their behalf: ${a.q20.trim()}`);
-  lines.push("- Match their voice — concise, direct, no padding. Don't use words or phrases they've flagged as theirs-to-avoid.");
-  lines.push('- When drafting on their behalf, hand back something they could send unchanged, not a starting point.');
-  lines.push('- Default to British/international English spelling unless they\'ve written American.');
+  if (a.q14) lines.push(`- What irritates them in others' writing: ${a.q14.trim()}`);\n  if (a.q15) {\n    lines.push('- Two notes about the same news (partner vs. team):');\n    lines.push(`  ${a.q15.trim().split('\n').join('\n  ')}`);\n  }\n  if (a.q16) lines.push(`- Giving feedback when something goes wrong: ${a.q16.trim()}`);\n  if (a.q17) lines.push(`- A communicator they admire: ${a.q17.trim()}`);\n  lines.push('');\n\n  lines.push('# How I should work with them');\n  lines.push('');\n  if (a.q18 && DECISION_STYLE[a.q18]) lines.push(`- ${DECISION_STYLE[a.q18]}`);\n  if (a.q19 && INFO_STYLE[a.q19])     lines.push(`- ${INFO_STYLE[a.q19]}`);\n  if (a.q20) lines.push(`- Never write on their behalf: ${a.q20.trim()}`);\n  lines.push("- Match their voice — concise, direct, no padding. Don't use words or phrases they've flagged as theirs-to-avoid.");\n  lines.push('- When drafting on their behalf, hand back something they could send unchanged, not a starting point.');\n  lines.push('- Default to British/international English spelling unless they\'ve written American.');
   lines.push('');
 
   if (a.q21 && a.q21.trim()) {
