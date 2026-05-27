@@ -403,7 +403,7 @@ const html = `<!doctype html>
         <span class="badge-opt">Optional</span>
       </div>
     </div>
-    <p class="step-body">In the Plaud app: select all recordings &rarr; tap Merge &rarr; Export transcript. You will get a single .txt file. Save it to your desktop.</p>
+    <p class="step-body">In the Plaud app: select all recordings &rarr; tap Merge &rarr; select Merge only &rarr; tap the merged file that appears &rarr; tap Export transcript. You will get a single .txt file. Save it to your desktop.</p>
     <p class="step-note">Don&rsquo;t use Plaud? Skip to Step 3.</p>
     <div class="thumb-grid thumb-grid-4">
       <div class="thumb-wrap" data-group="1" data-index="0" tabindex="0" role="button" aria-label="View image fullscreen">
@@ -433,7 +433,7 @@ const html = `<!doctype html>
         <h2 class="step-title">Run this prompt in your Claude</h2>
       </div>
     </div>
-    <p class="step-body">Open Claude &rarr; go to your work Project (or create one at claude.ai/projects) &rarr; start a new chat inside that project. If you have a Plaud .txt file, click + and attach it. Then copy the prompt below and paste it into the chat. This takes 3&ndash;5 minutes &mdash; Claude reads your data automatically, then asks you 5 questions one by one. Answer each one. After your last answer, Claude will generate your profile automatically.</p>
+    <p class="step-body">Open Claude &rarr; go to an existing Project where you already work, or start a new chat if you don&rsquo;t use Projects. If you have a Plaud .txt file, click + and attach it. Then copy the prompt below and paste it into the chat. This takes 3&ndash;5 minutes &mdash; Claude reads your data automatically, then asks you 5 questions one by one. Answer each one. After your last answer, Claude will generate your profile automatically.</p>
     <p class="code-hint">One prompt. Copy it all at once &mdash; it does everything.</p>
     <div class="code-wrap">
       <button class="copy-btn" id="copy-btn">Copy</button>
