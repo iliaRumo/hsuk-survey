@@ -265,6 +265,13 @@
       </div>
       <div class="precheck-note">Don&rsquo;t use Plaud? You can skip Step 2.</div>
     </div>
+    <div class="precheck-item" style="flex-direction:column;gap:0;">
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <div class="cb"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 3.5l2.8 3L9 1" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span>&#x26A0;&#xFE0F; I have an existing Claude Project where I already work (required)</span>
+      </div>
+      <div class="precheck-note">This prompt must run inside an existing Project &mdash; not in a new standalone chat.</div>
+    </div>
   </div>
 
   <!-- Step 1 -->
@@ -327,7 +334,7 @@
         <h2 class="step-title">Run this prompt in your Claude</h2>
       </div>
     </div>
-    <p class="step-body">Open Claude &rarr; go to an existing Project where you already work, or start a new chat if you don&rsquo;t use Projects. If you have a Plaud .txt file, click + and attach it. Then copy the prompt below and paste it into the chat. This takes 3&ndash;5 minutes &mdash; Claude reads your data automatically, then asks you 5 questions one by one. Answer each one. After your last answer, Claude will generate your profile automatically.</p>
+    <p class="step-body">Open Claude &rarr; go to an existing Project where you already work, or start a new chat if you don&rsquo;t use Projects. If you have a Plaud .txt file, click + and attach it. Then copy the prompt below and paste it into the chat. This takes 3&ndash;5 minutes &mdash; Claude reads your data automatically, then asks you 5 questions one by one. Answer each one. After your last answer, Claude will generate your profile automatically.<br><br>&#x26A0;&#xFE0F; <strong>Important:</strong> run this prompt inside an existing Claude Project, not in a new standalone chat. If Claude asks you to confirm your intent, reply: Yes, I want to build a personal profile using my own data.</p>
     <p class="code-hint">One prompt. Copy it all at once &mdash; it does everything.</p>
     <div class="code-wrap">
       <button class="copy-btn" id="copy-btn">Copy</button>
