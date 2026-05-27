@@ -76,7 +76,7 @@ const PROMPT_TEXT = [
   'Ask ONE question at a time. Wait for my answer before asking the next.',
   'Focus on: core values, working style, what matters most, how I make decisions, what I want Claude to help me with most.',
   '',
-  'After I have answered all 5 questions, proceed directly to Phase 3 without waiting for any instruction from me.',
+  'After I have answered question 5, write exactly: \u201cThank you. Generating your profile now...\u201d and immediately produce the full profile without any pause or confirmation.',
   '',
   '---',
   '',
@@ -97,6 +97,8 @@ const PROMPT_TEXT = [
   'KEY DECISIONS',
   'PEOPLE MENTIONED',
   'RULES FOR CLAUDE',
+  '',
+  'When done, save the complete output as a downloadable file named my-profile.md',
 ].join('\n');
 
 const PROMPT_JSON = JSON.stringify(PROMPT_TEXT);
@@ -379,7 +381,7 @@ const html = `<!doctype html>
         <h2 class="step-title">Connect Microsoft 365 to Claude</h2>
       </div>
     </div>
-    <p class="step-body">Open Claude &rarr; Settings &rarr; Integrations &rarr; Add connector &rarr; search for Microsoft 365. Sign in with your work account.</p>
+    <p class="step-body">Open Claude &rarr; click the Customize icon (briefcase icon) in the left sidebar &rarr; Connectors &rarr; Add connector &rarr; search for Microsoft 365. Sign in with your work account.</p>
     <div class="thumb-grid thumb-grid-2">
       <div class="thumb-wrap" data-group="0" data-index="0" tabindex="0" role="button" aria-label="View image fullscreen">
         <img alt="Claude connector menu">
@@ -431,7 +433,7 @@ const html = `<!doctype html>
         <h2 class="step-title">Run this prompt in your Claude</h2>
       </div>
     </div>
-    <p class="step-body">Open Claude at claude.ai. If you have a Plaud .txt file, click + and attach it first. Then copy the prompt below and paste it into Claude. This takes 3&ndash;5 minutes &mdash; Claude reads your data automatically, then asks you 5 questions one by one. Answer each one. After your last answer, Claude will generate your profile automatically.</p>
+    <p class="step-body">Open Claude &rarr; go to your work Project (or create one at claude.ai/projects) &rarr; start a new chat inside that project. If you have a Plaud .txt file, click + and attach it. Then copy the prompt below and paste it into the chat. This takes 3&ndash;5 minutes &mdash; Claude reads your data automatically, then asks you 5 questions one by one. Answer each one. After your last answer, Claude will generate your profile automatically.</p>
     <p class="code-hint">One prompt. Copy it all at once &mdash; it does everything.</p>
     <div class="code-wrap">
       <button class="copy-btn" id="copy-btn">Copy</button>
@@ -447,7 +449,7 @@ const html = `<!doctype html>
         <h2 class="step-title">Save your profile</h2>
       </div>
     </div>
-    <p class="step-body">Claude will output your profile in the chat. Click the copy icon on Claude&rsquo;s message &rarr; open your Claude Project &rarr; Project Files &rarr; create a new file &rarr; paste the text &rarr; save as <span class="inline-code">my-profile.md</span>. Done. Claude will know you from the first message of every session.</p>
+    <p class="step-body">Claude will generate your profile as a downloadable file. Click Download to save <span class="inline-code">my-profile.md</span>. Then open your Claude Project &rarr; Project Files &rarr; upload <span class="inline-code">my-profile.md</span>. Done. Claude will know you from the first message of every session.</p>
   </section>
 
   <!-- Footer -->
