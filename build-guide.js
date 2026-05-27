@@ -73,7 +73,7 @@ const PROMPT_TEXT = [
   'PHASE 2 \u2014 ASK 5 QUESTIONS',
   '',
   'Ask me exactly 5 questions to fill gaps you could not find in the data.',
-  'Ask ONE question at a time. Wait for my answer before asking the next.',
+  'Ask ONE question at a time. Wait for my answer before asking the next. Do not proceed to Phase 3 and do not create any file until you have received answers to all 5 questions.',
   'Focus on: core values, working style, what matters most, how I make decisions, what I want Claude to help me with most.',
   '',
   'After I have answered question 5, write exactly: \u201cThank you. Generating your profile now...\u201d and immediately produce the full profile without any pause or confirmation.',
