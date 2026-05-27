@@ -98,7 +98,7 @@ const PROMPT_TEXT = [
   'PEOPLE MENTIONED',
   'RULES FOR CLAUDE',
   '',
-  'When done, save the complete output as a downloadable file named my-profile.md',
+  'IMPORTANT: Do not create or save any file until you have received answers to all 5 questions and completed the full profile text. Only after Phase 3 is fully written \u2014 save it as a downloadable file named my-profile.md',
 ].join('\n');
 
 const PROMPT_JSON = JSON.stringify(PROMPT_TEXT);
